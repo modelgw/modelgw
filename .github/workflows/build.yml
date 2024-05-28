@@ -1,0 +1,33 @@
+name: Build and Push Docker Image to Docker Hub
+
+on:
+  push:
+    tags:
+      - version/*
+
+jobs:
+  build:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get tag version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/version/}" >> $GITHUB_ENV
+
+      - name: Login to docker registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push docker image to registry
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            modelgw/modelgw:${{ env.VERSION }}
+            modelgw/modelgw:latest
