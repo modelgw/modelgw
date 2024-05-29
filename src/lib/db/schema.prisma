@@ -77,12 +77,3 @@ model GatewayKey {
   @@index([gatewayId])
   @@map("gateway_keys")
 }
-
-model TechnologyEntity {
-  description String?
-  displayName String  @unique
-  id          Int     @id @default(autoincrement())
-  url         String?
-
-  @@map("technology")
-}

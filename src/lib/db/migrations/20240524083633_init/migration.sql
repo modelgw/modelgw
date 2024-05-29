@@ -54,16 +54,6 @@ CREATE TABLE "gateway_keys" (
     CONSTRAINT "gateway_keys_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "technology" (
-    "description" TEXT,
-    "displayName" TEXT NOT NULL,
-    "id" SERIAL NOT NULL,
-    "url" TEXT,
-
-    CONSTRAINT "technology_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE INDEX "inference_endpoints_status_idx" ON "inference_endpoints" USING HASH ("status");
 
@@ -78,9 +68,6 @@ CREATE INDEX "gateway_keys_status_idx" ON "gateway_keys"("status");
 
 -- CreateIndex
 CREATE INDEX "gateway_keys_gateway_id_idx" ON "gateway_keys"("gateway_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "technology_displayName_key" ON "technology"("displayName");
 
 -- AddForeignKey
 ALTER TABLE "gateway_inference_endpoints" ADD CONSTRAINT "gateway_inference_endpoints_inference_endpoint_id_fkey" FOREIGN KEY ("inference_endpoint_id") REFERENCES "inference_endpoints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
