@@ -28,6 +28,7 @@ ENV NODE_ENV production
 COPY --from=builder /app/package*.json /app/
 COPY --from=builder /app/dist /app
 COPY --from=builder /app/src/lib/db/schema.prisma /app/lib/db/schema.prisma
+COPY --from=builder /app/src/lib/db/migrations /app/lib/db/migrations
 RUN sed -i 's/src\/lib\/db\/schema.prisma/lib\/db\/schema.prisma/' /app/package.json
 RUN npm ci --fund=false --audit=false --omit=dev
 

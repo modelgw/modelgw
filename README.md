@@ -22,7 +22,7 @@ modelgw/modelgw:latest
 - `GATEWAY_PORT` - Gateway port - this is where your apps connect (Default 4001).
 - `ADMIN_PORT` - The port exposed to connect with the [admin application](https://github.com/modelgw/modelgw-admin) (Default 4000).
 - `DATABASE_URL` - The database connection URL.
-- `CORS_ALLOWED_ORIGINS` - (Optional) Comma separated Allowed Origins. Set to address of [admin application](https://github.com/modelgw/modelgw-admin). (See [CORS Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS))
+- `CORS_ALLOWED_ORIGINS` - (Optional) Comma separated Allowed Origins. (See [CORS Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS))
 - `PRISMA_FIELD_ENCRYPTION_KEY` - encryption key used to encrypt/decrypt your API keys. Can be generate at [https://cloak.47ng.com].
 - `JWT_SECRET` - random secret used to sign JWT.
 - `ADMIN_EMAIL` - email address used for logging in.
