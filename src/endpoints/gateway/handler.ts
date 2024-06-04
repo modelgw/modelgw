@@ -27,7 +27,7 @@ export const createGatewayHandler = ({ prismaClient }: CreateGatewayHandlerOptio
 		logger.info({ clientIp, url: req.url, method: req.method }, 'Received gateway request');
 		let key: string | null | undefined = req.headers['authorization']?.replace(/^Bearer\s+/, '');
 		if (!key) {
-			key = req.headers['api-key']?.at(0);
+			key = Array.isArray(req.headers['api-key']) ? req.headers['api-key'][0] : req.headers['api-key'];
 		};
 		if (!key) return res.status(OpenAIUnauthorizedResponseStatus).json(OpenAIUnauthorizedResponse);
 
