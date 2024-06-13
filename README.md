@@ -1,13 +1,21 @@
-# Model Gateway
+# 🚀 Model Gateway
 
-Gateway and load balancer between your apps and LLM inference endpoints.
+The ultimate gateway and load balancer bridging your apps with LLM inference endpoints. Experience seamless integration and top-tier performance.
 
-## [Documentation ➡️ https://modelgw.com/docs](https://modelgw.com/docs)
+![Model Gateway High-level architecture](https://modelgw.com/docs/img/diagram/hl-component.svg)
 
+## [📚 Documentation ➡️ https://modelgw.com/docs](https://modelgw.com/docs)
 
-##  Development
+## 🌟 Features
 
-### Database
+- High-performance load balancing
+- Seamless integration with various LLM inference endpoints
+- Scalable and robust architecture
+- User-friendly configuration
+
+## 🛠️ Development
+
+### 🗄️ Database
 
 Set up PostgreSQL database, user and privileges.
 
@@ -18,7 +26,7 @@ GRANT ALL PRIVILEGES ON DATABASE modelgw TO modelgw;
 ALTER USER modelgw CREATEDB;
 ```
 
-### Configuration
+### ⚙️ Configuration
 
 Create `.env` or use environment variables to run in dev mode:
 
@@ -28,7 +36,7 @@ ADMIN_PORT=4000
 GATEWAY_PORT=4001
 ```
 
-### Starting in dev mode
+### 🚀 Starting in dev mode
 
 Install dependencies and start dev mode:
 
@@ -37,7 +45,7 @@ npm ci
 npm run dev | pino-pretty
 ```
 
-## Built-in Scripts
+## 🧰 Built-in Scripts
 
 - `npm run build` - Compiles the project. Emits files referenced in with the compiler settings from tsconfig.build.json.
 - `npm test` - Prepares and runs the unit tests.
@@ -51,10 +59,14 @@ npm run dev | pino-pretty
 - `npm run prisma:generate` - Generates Prisma Client code.
 - `npm run prisma:deploy` - Applies all pending migrations, and creates the database if it does not exist. For production use.
 
-## Build
+## 🛠️ Build
 
-### Build Docker image locally
+### 🐳 xBuild Docker image locally
 
 ```sh
 docker build -t modelgw/modelgw:latest --progress=plain .
 ```
+
+## 📜 License
+
+This project is licensed under the MIT License.

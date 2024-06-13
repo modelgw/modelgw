@@ -3,6 +3,7 @@ import { logger } from '@/lib/logger';
 import { ApolloServer, ApolloServerPlugin } from '@apollo/server';
 import { unwrapResolverError } from '@apollo/server/errors';
 import { expressMiddleware } from '@apollo/server/express4';
+import { AggregateAuthenticationError } from '@azure/identity';
 import { RequestHandler } from 'express';
 import { GraphQLError, GraphQLErrorExtensions, GraphQLFormattedError } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
@@ -65,6 +66,12 @@ const server = new ApolloServer<ServerContext>({
 				code: 'UNAUTHORIZED',
 			};
 			return new GraphQLError('Unauthorized', { extensions, path: formattedError.path });
+		} else if (originalError instanceof AggregateAuthenticationError) {
+			logger.error('Azure authentication error %s', originalError);
+			const extensions: GraphQLErrorExtensions = {
+				code: 'AZURE_AUTHENTICATION_ERROR',
+			};
+			return new GraphQLError(originalError.message, { extensions, path: formattedError.path });
 		}
 		logger.error('Unexpected error %s', originalError);
 		return formattedError;

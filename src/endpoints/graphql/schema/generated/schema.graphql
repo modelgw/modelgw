@@ -13,6 +13,18 @@ type AddGatewayKeyPayload {
   key: String
 }
 
+type AzureModelDeployment {
+  accountEndpoint: String!
+  accountLocation: String!
+  accountName: String!
+  id: ID!
+  modelDeploymentModelName: String!
+  modelDeploymentModelVersion: String!
+  modelDeploymentName: String!
+  resourceGroupName: String!
+  subscriptionId: String!
+}
+
 input CreateGatewayInput {
   name: String!
 }
@@ -99,6 +111,19 @@ type GatewayKeyEdge {
   node: GatewayKey
 }
 
+input ImportAzureModelDeploymentInput {
+  inferenceEndpointName: String
+  modelDeploymentId: String!
+}
+
+input ImportAzureModelDeploymentsInput {
+  modelDeployments: [ImportAzureModelDeploymentInput!]!
+}
+
+type ImportAzureModelDeploymentsPayload {
+  inferenceEndpoints: [InferenceEndpoint!]!
+}
+
 type InferenceEndpoint implements Node {
   createdAt: String!
   deploymentName: String
@@ -140,6 +165,9 @@ type Mutation {
   createInferenceEndpoint(
     input: CreateInferenceEndpointInput!
   ): CreateInferenceEndpointPayload
+  importAzureModelDeployments(
+    input: ImportAzureModelDeploymentsInput!
+  ): ImportAzureModelDeploymentsPayload
   login(input: LoginInput!): LoginPayload
   logout: Boolean
   revokeGatewayKey(input: RevokeGatewayKeyInput!): RevokeGatewayKeyPayload
@@ -161,6 +189,7 @@ type PageInfo {
 }
 
 type Query {
+  azureModelDeployments: [AzureModelDeployment!]!
   gateways(
     after: String
     before: String

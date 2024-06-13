@@ -33,6 +33,19 @@ export type AddGatewayKeyPayload = {
   key?: Maybe<Scalars["String"]>;
 };
 
+export type AzureModelDeployment = {
+  __typename?: "AzureModelDeployment";
+  accountEndpoint: Scalars["String"];
+  accountLocation: Scalars["String"];
+  accountName: Scalars["String"];
+  id: Scalars["ID"];
+  modelDeploymentModelName: Scalars["String"];
+  modelDeploymentModelVersion: Scalars["String"];
+  modelDeploymentName: Scalars["String"];
+  resourceGroupName: Scalars["String"];
+  subscriptionId: Scalars["String"];
+};
+
 export type CreateGatewayInput = {
   name: Scalars["String"];
 };
@@ -133,6 +146,20 @@ export type GatewayKeyEdge = {
   node?: Maybe<GatewayKey>;
 };
 
+export type ImportAzureModelDeploymentInput = {
+  inferenceEndpointName?: InputMaybe<Scalars["String"]>;
+  modelDeploymentId: Scalars["String"];
+};
+
+export type ImportAzureModelDeploymentsInput = {
+  modelDeployments: Array<ImportAzureModelDeploymentInput>;
+};
+
+export type ImportAzureModelDeploymentsPayload = {
+  __typename?: "ImportAzureModelDeploymentsPayload";
+  inferenceEndpoints: Array<InferenceEndpoint>;
+};
+
 export type InferenceEndpoint = Node & {
   __typename?: "InferenceEndpoint";
   createdAt: Scalars["String"];
@@ -177,6 +204,7 @@ export type Mutation = {
   addGatewayKey?: Maybe<AddGatewayKeyPayload>;
   createGateway?: Maybe<CreateGatewayPayload>;
   createInferenceEndpoint?: Maybe<CreateInferenceEndpointPayload>;
+  importAzureModelDeployments?: Maybe<ImportAzureModelDeploymentsPayload>;
   login?: Maybe<LoginPayload>;
   logout?: Maybe<Scalars["Boolean"]>;
   revokeGatewayKey?: Maybe<RevokeGatewayKeyPayload>;
@@ -194,6 +222,10 @@ export type MutationcreateGatewayArgs = {
 
 export type MutationcreateInferenceEndpointArgs = {
   input: CreateInferenceEndpointInput;
+};
+
+export type MutationimportAzureModelDeploymentsArgs = {
+  input: ImportAzureModelDeploymentsInput;
 };
 
 export type MutationloginArgs = {
@@ -226,6 +258,7 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: "Query";
+  azureModelDeployments: Array<AzureModelDeployment>;
   gateways?: Maybe<GatewayConnection>;
   inferenceEndpoints?: Maybe<InferenceEndpointConnection>;
   node?: Maybe<Node>;
@@ -402,6 +435,7 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   AddGatewayKeyInput: AddGatewayKeyInput;
   AddGatewayKeyPayload: ResolverTypeWrapper<AddGatewayKeyPayload>;
+  AzureModelDeployment: ResolverTypeWrapper<AzureModelDeployment>;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   CreateGatewayInput: CreateGatewayInput;
   CreateGatewayPayload: ResolverTypeWrapper<CreateGatewayPayload>;
@@ -416,6 +450,9 @@ export type ResolversTypes = {
   GatewayKeyConnection: ResolverTypeWrapper<GatewayKeyConnection>;
   GatewayKeyEdge: ResolverTypeWrapper<GatewayKeyEdge>;
   ID: ResolverTypeWrapper<Scalars["ID"]>;
+  ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
+  ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
+  ImportAzureModelDeploymentsPayload: ResolverTypeWrapper<ImportAzureModelDeploymentsPayload>;
   InferenceEndpoint: ResolverTypeWrapper<InferenceEndpoint>;
   InferenceEndpointConnection: ResolverTypeWrapper<InferenceEndpointConnection>;
   InferenceEndpointEdge: ResolverTypeWrapper<InferenceEndpointEdge>;
@@ -443,6 +480,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AddGatewayKeyInput: AddGatewayKeyInput;
   AddGatewayKeyPayload: AddGatewayKeyPayload;
+  AzureModelDeployment: AzureModelDeployment;
   Boolean: Scalars["Boolean"];
   CreateGatewayInput: CreateGatewayInput;
   CreateGatewayPayload: CreateGatewayPayload;
@@ -457,6 +495,9 @@ export type ResolversParentTypes = {
   GatewayKeyConnection: GatewayKeyConnection;
   GatewayKeyEdge: GatewayKeyEdge;
   ID: Scalars["ID"];
+  ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
+  ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
+  ImportAzureModelDeploymentsPayload: ImportAzureModelDeploymentsPayload;
   InferenceEndpoint: InferenceEndpoint;
   InferenceEndpointConnection: InferenceEndpointConnection;
   InferenceEndpointEdge: InferenceEndpointEdge;
@@ -490,6 +531,38 @@ export type AddGatewayKeyPayloadResolvers<
     ContextType
   >;
   key?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AzureModelDeploymentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["AzureModelDeployment"] = ResolversParentTypes["AzureModelDeployment"]
+> = {
+  accountEndpoint?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  accountLocation?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  accountName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  modelDeploymentModelName?: Resolver<
+    ResolversTypes["String"],
+    ParentType,
+    ContextType
+  >;
+  modelDeploymentModelVersion?: Resolver<
+    ResolversTypes["String"],
+    ParentType,
+    ContextType
+  >;
+  modelDeploymentName?: Resolver<
+    ResolversTypes["String"],
+    ParentType,
+    ContextType
+  >;
+  resourceGroupName?: Resolver<
+    ResolversTypes["String"],
+    ParentType,
+    ContextType
+  >;
+  subscriptionId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -624,6 +697,18 @@ export type GatewayKeyEdgeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ImportAzureModelDeploymentsPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["ImportAzureModelDeploymentsPayload"] = ResolversParentTypes["ImportAzureModelDeploymentsPayload"]
+> = {
+  inferenceEndpoints?: Resolver<
+    Array<ResolversTypes["InferenceEndpoint"]>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type InferenceEndpointResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["InferenceEndpoint"] = ResolversParentTypes["InferenceEndpoint"]
@@ -712,6 +797,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationcreateInferenceEndpointArgs, "input">
   >;
+  importAzureModelDeployments?: Resolver<
+    Maybe<ResolversTypes["ImportAzureModelDeploymentsPayload"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationimportAzureModelDeploymentsArgs, "input">
+  >;
   login?: Resolver<
     Maybe<ResolversTypes["LoginPayload"]>,
     ParentType,
@@ -778,6 +869,11 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  azureModelDeployments?: Resolver<
+    Array<ResolversTypes["AzureModelDeployment"]>,
+    ParentType,
+    ContextType
+  >;
   gateways?: Resolver<
     Maybe<ResolversTypes["GatewayConnection"]>,
     ParentType,
@@ -842,6 +938,7 @@ export type ViewerResolvers<
 
 export type Resolvers<ContextType = any> = {
   AddGatewayKeyPayload?: AddGatewayKeyPayloadResolvers<ContextType>;
+  AzureModelDeployment?: AzureModelDeploymentResolvers<ContextType>;
   CreateGatewayPayload?: CreateGatewayPayloadResolvers<ContextType>;
   CreateInferenceEndpointPayload?: CreateInferenceEndpointPayloadResolvers<ContextType>;
   Gateway?: GatewayResolvers<ContextType>;
@@ -852,6 +949,7 @@ export type Resolvers<ContextType = any> = {
   GatewayKey?: GatewayKeyResolvers<ContextType>;
   GatewayKeyConnection?: GatewayKeyConnectionResolvers<ContextType>;
   GatewayKeyEdge?: GatewayKeyEdgeResolvers<ContextType>;
+  ImportAzureModelDeploymentsPayload?: ImportAzureModelDeploymentsPayloadResolvers<ContextType>;
   InferenceEndpoint?: InferenceEndpointResolvers<ContextType>;
   InferenceEndpointConnection?: InferenceEndpointConnectionResolvers<ContextType>;
   InferenceEndpointEdge?: InferenceEndpointEdgeResolvers<ContextType>;

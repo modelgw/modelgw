@@ -14,6 +14,7 @@ export class UnauthorizedError extends Error {
 export const permissions = shield({
   Query: {
     '*': deny,
+    azureModelDeployments: isAuthenticated,
     gateways: isAuthenticated,
     inferenceEndpoints: isAuthenticated,
     node: isAuthenticated,
@@ -32,6 +33,7 @@ export const permissions = shield({
     // Infernce Endpoint
     createInferenceEndpoint: isAuthenticated,
     updateInferenceEndpoint: isAuthenticated,
+    importAzureModelDeployments: isAuthenticated,
   },
 }, {
   allowExternalErrors: true,
