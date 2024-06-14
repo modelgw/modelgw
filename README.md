@@ -61,7 +61,7 @@ npm run dev | pino-pretty
 
 ## 🛠️ Build
 
-### 🐳 xBuild Docker image locally
+### 🐳 Build Docker image locally
 
 ```sh
 docker build -t modelgw/modelgw:latest --progress=plain .
