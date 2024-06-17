@@ -71,26 +71,56 @@ export async function getAllModelDeployments() {
 }
 
 async function getAzureSubscriptions(api: axios.AxiosInstance) {
-  const response = await api.get('/subscriptions?api-version=2022-12-01');
-  return response.data.value;
+  logger.debug('Loading Azure subscriptions');
+  try {
+    const response = await api.get('/subscriptions?api-version=2022-12-01');
+    return response.data.value;
+  } catch (error) {
+    logger.error({ error }, 'Failed to load Azure subscriptions');
+    throw error;
+  }
 }
 
 async function getResouceGroups(subscriptionId: string, api: axios.AxiosInstance) {
-  const response = await api.get(`/subscriptions/${subscriptionId}/resourcegroups?api-version=2022-12-01`);
-  return response.data.value;
+  logger.debug({ subscriptionId }, 'Loading resource groups');
+  try {
+    const response = await api.get(`/subscriptions/${subscriptionId}/resourcegroups?api-version=2022-12-01`);
+    return response.data.value;
+  } catch (error) {
+    logger.error({ error, subscriptionId }, 'Failed to load resource groups');
+    throw error;
+  }
 }
 
 async function getAIServicesAccounts(subscriptionId: string, resourceGroupName: string, api: axios.AxiosInstance) {
-  const response = await api.get(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts?api-version=2023-05-01`);
-  return response.data.value;
+  logger.debug({ subscriptionId, resourceGroupName }, 'Loading AI services accounts');
+  try {
+    const response = await api.get(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts?api-version=2023-05-01`);
+    return response.data.value;
+  } catch (error) {
+    logger.error({ error, subscriptionId, resourceGroupName }, 'Failed to load AI services accounts');
+    throw error;
+  }
 }
 
 async function getAccountKeys(subscriptionId: string, resourceGroupName: string, aisAccountName: string, api: axios.AxiosInstance) {
-  const response = await api.post(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/${aisAccountName}/listKeys?api-version=2023-05-01`);
-  return response.data;
+  logger.debug({ subscriptionId, resourceGroupName, aisAccountName }, 'Loading account keys');
+  try {
+    const response = await api.post(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/${aisAccountName}/listKeys?api-version=2023-05-01`);
+    return response.data;
+  } catch (error) {
+    logger.error({ error, subscriptionId, resourceGroupName, aisAccountName }, 'Failed to load account keys');
+    throw error;
+  }
 }
 
 async function getModelDeployments(subscriptionId: string, resourceGroupName: string, aisAccountName: string, api: axios.AxiosInstance) {
-  const response = await api.get(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/${aisAccountName}/deployments?api-version=2023-05-01`);
-  return response.data.value;
+  logger.debug({ subscriptionId, resourceGroupName, aisAccountName }, 'Loading model deployments');
+  try {
+    const response = await api.get(`/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/${aisAccountName}/deployments?api-version=2023-05-01`);
+    return response.data.value;
+  } catch (error) {
+    logger.error({ error, subscriptionId, resourceGroupName, aisAccountName }, 'Failed to load model deployments');
+    throw error;
+  }
 }
