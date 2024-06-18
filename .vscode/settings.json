@@ -29,6 +29,7 @@
     }
   },
   "[json]": {
+    "editor.formatOnSave": true,
     "editor.tabSize": 2,
   },
   "[prisma]": {

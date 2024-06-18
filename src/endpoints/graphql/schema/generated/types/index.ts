@@ -10,44 +10,53 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T
+> = { [_ in K]?: never };
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
+    };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & {
   [P in K]-?: NonNullable<T[P]>;
 };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
 };
 
 export type AddGatewayKeyInput = {
-  gatewayId: Scalars["ID"];
-  name: Scalars["String"];
+  gatewayId: Scalars["ID"]["input"];
+  name: Scalars["String"]["input"];
 };
 
 export type AddGatewayKeyPayload = {
   __typename?: "AddGatewayKeyPayload";
   gatewayKey?: Maybe<GatewayKey>;
-  key?: Maybe<Scalars["String"]>;
+  key?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type AzureModelDeployment = {
   __typename?: "AzureModelDeployment";
-  accountEndpoint: Scalars["String"];
-  accountLocation: Scalars["String"];
-  accountName: Scalars["String"];
-  id: Scalars["ID"];
-  modelDeploymentModelName: Scalars["String"];
-  modelDeploymentModelVersion: Scalars["String"];
-  modelDeploymentName: Scalars["String"];
-  resourceGroupName: Scalars["String"];
-  subscriptionId: Scalars["String"];
+  accountEndpoint: Scalars["String"]["output"];
+  accountLocation: Scalars["String"]["output"];
+  accountName: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  modelDeploymentModelName: Scalars["String"]["output"];
+  modelDeploymentModelVersion: Scalars["String"]["output"];
+  modelDeploymentName: Scalars["String"]["output"];
+  resourceGroupName: Scalars["String"]["output"];
+  subscriptionId: Scalars["String"]["output"];
 };
 
 export type CreateGatewayInput = {
-  name: Scalars["String"];
+  name: Scalars["String"]["input"];
 };
 
 export type CreateGatewayPayload = {
@@ -56,14 +65,14 @@ export type CreateGatewayPayload = {
 };
 
 export type CreateInferenceEndpointInput = {
-  deploymentName?: InputMaybe<Scalars["String"]>;
-  endpoint: Scalars["String"];
-  key?: InputMaybe<Scalars["String"]>;
-  modelName?: InputMaybe<Scalars["String"]>;
-  modelVersion?: InputMaybe<Scalars["String"]>;
-  name: Scalars["String"];
-  platform: Scalars["String"];
-  region?: InputMaybe<Scalars["String"]>;
+  deploymentName?: InputMaybe<Scalars["String"]["input"]>;
+  endpoint: Scalars["String"]["input"];
+  key?: InputMaybe<Scalars["String"]["input"]>;
+  modelName?: InputMaybe<Scalars["String"]["input"]>;
+  modelVersion?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
+  platform: Scalars["String"]["input"];
+  region?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type CreateInferenceEndpointPayload = {
@@ -73,41 +82,41 @@ export type CreateInferenceEndpointPayload = {
 
 export type Gateway = Node & {
   __typename?: "Gateway";
-  createdAt: Scalars["String"];
-  id: Scalars["ID"];
+  createdAt: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
   inferenceEndpoints?: Maybe<GatewayInferenceEndpointConnection>;
   keys?: Maybe<GatewayKeyConnection>;
-  logPayload: Scalars["Boolean"];
-  logTraffic: Scalars["Boolean"];
-  name: Scalars["String"];
-  status: Scalars["String"];
-  updatedAt: Scalars["String"];
+  logPayload: Scalars["Boolean"]["output"];
+  logTraffic: Scalars["Boolean"]["output"];
+  name: Scalars["String"]["output"];
+  status: Scalars["String"]["output"];
+  updatedAt: Scalars["String"]["output"];
 };
 
 export type GatewayinferenceEndpointsArgs = {
-  after?: InputMaybe<Scalars["String"]>;
-  before?: InputMaybe<Scalars["String"]>;
-  first?: InputMaybe<Scalars["Int"]>;
-  last?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type GatewaykeysArgs = {
-  after?: InputMaybe<Scalars["String"]>;
-  before?: InputMaybe<Scalars["String"]>;
-  first?: InputMaybe<Scalars["Int"]>;
-  last?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type GatewayConnection = {
   __typename?: "GatewayConnection";
   edges?: Maybe<Array<Maybe<GatewayEdge>>>;
   pageInfo: PageInfo;
-  totalCount: Scalars["Int"];
+  totalCount: Scalars["Int"]["output"];
 };
 
 export type GatewayEdge = {
   __typename?: "GatewayEdge";
-  cursor: Scalars["String"];
+  cursor: Scalars["String"]["output"];
   node?: Maybe<Gateway>;
 };
 
@@ -115,42 +124,42 @@ export type GatewayInferenceEndpointConnection = {
   __typename?: "GatewayInferenceEndpointConnection";
   edges?: Maybe<Array<Maybe<GatewayInferenceEndpointEdge>>>;
   pageInfo: PageInfo;
-  totalCount: Scalars["Int"];
+  totalCount: Scalars["Int"]["output"];
 };
 
 export type GatewayInferenceEndpointEdge = {
   __typename?: "GatewayInferenceEndpointEdge";
-  cursor: Scalars["String"];
+  cursor: Scalars["String"]["output"];
   node?: Maybe<InferenceEndpoint>;
-  order: Scalars["Int"];
+  order: Scalars["Int"]["output"];
 };
 
 export type GatewayKey = Node & {
   __typename?: "GatewayKey";
-  createdAt: Scalars["String"];
-  id: Scalars["ID"];
-  maskedKey: Scalars["String"];
-  name: Scalars["String"];
-  status: Scalars["String"];
-  updatedAt: Scalars["String"];
+  createdAt: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  maskedKey: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
+  status: Scalars["String"]["output"];
+  updatedAt: Scalars["String"]["output"];
 };
 
 export type GatewayKeyConnection = {
   __typename?: "GatewayKeyConnection";
   edges?: Maybe<Array<Maybe<GatewayKeyEdge>>>;
   pageInfo: PageInfo;
-  totalCount: Scalars["Int"];
+  totalCount: Scalars["Int"]["output"];
 };
 
 export type GatewayKeyEdge = {
   __typename?: "GatewayKeyEdge";
-  cursor: Scalars["String"];
+  cursor: Scalars["String"]["output"];
   node?: Maybe<GatewayKey>;
 };
 
 export type ImportAzureModelDeploymentInput = {
-  inferenceEndpointName?: InputMaybe<Scalars["String"]>;
-  modelDeploymentId: Scalars["String"];
+  inferenceEndpointName?: InputMaybe<Scalars["String"]["input"]>;
+  modelDeploymentId: Scalars["String"]["input"];
 };
 
 export type ImportAzureModelDeploymentsInput = {
@@ -164,51 +173,51 @@ export type ImportAzureModelDeploymentsPayload = {
 
 export type InferenceEndpoint = Node & {
   __typename?: "InferenceEndpoint";
-  createdAt: Scalars["String"];
-  deploymentName?: Maybe<Scalars["String"]>;
-  endpoint: Scalars["String"];
-  id: Scalars["ID"];
-  modelName?: Maybe<Scalars["String"]>;
-  modelVersion?: Maybe<Scalars["String"]>;
-  name: Scalars["String"];
-  platform: Scalars["String"];
-  region?: Maybe<Scalars["String"]>;
-  status: Scalars["String"];
-  updatedAt: Scalars["String"];
+  createdAt: Scalars["String"]["output"];
+  deploymentName?: Maybe<Scalars["String"]["output"]>;
+  endpoint: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  modelName?: Maybe<Scalars["String"]["output"]>;
+  modelVersion?: Maybe<Scalars["String"]["output"]>;
+  name: Scalars["String"]["output"];
+  platform: Scalars["String"]["output"];
+  region?: Maybe<Scalars["String"]["output"]>;
+  status: Scalars["String"]["output"];
+  updatedAt: Scalars["String"]["output"];
 };
 
 export type InferenceEndpointConnection = {
   __typename?: "InferenceEndpointConnection";
   edges?: Maybe<Array<Maybe<InferenceEndpointEdge>>>;
   pageInfo: PageInfo;
-  totalCount: Scalars["Int"];
+  totalCount: Scalars["Int"]["output"];
 };
 
 export type InferenceEndpointEdge = {
   __typename?: "InferenceEndpointEdge";
-  cursor: Scalars["String"];
+  cursor: Scalars["String"]["output"];
   node?: Maybe<InferenceEndpoint>;
 };
 
 export type LoginInput = {
-  email: Scalars["String"];
-  password: Scalars["String"];
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
 };
 
 export type LoginPayload = {
   __typename?: "LoginPayload";
-  token?: Maybe<Scalars["String"]>;
+  token?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type Mutation = {
   __typename?: "Mutation";
-  _empty?: Maybe<Scalars["String"]>;
+  _empty?: Maybe<Scalars["String"]["output"]>;
   addGatewayKey?: Maybe<AddGatewayKeyPayload>;
   createGateway?: Maybe<CreateGatewayPayload>;
   createInferenceEndpoint?: Maybe<CreateInferenceEndpointPayload>;
   importAzureModelDeployments?: Maybe<ImportAzureModelDeploymentsPayload>;
   login?: Maybe<LoginPayload>;
-  logout?: Maybe<Scalars["Boolean"]>;
+  logout?: Maybe<Scalars["Boolean"]["output"]>;
   revokeGatewayKey?: Maybe<RevokeGatewayKeyPayload>;
   updateGateway?: Maybe<UpdateGatewayPayload>;
   updateInferenceEndpoint?: Maybe<UpdateInferenceEndpointPayload>;
@@ -247,15 +256,15 @@ export type MutationupdateInferenceEndpointArgs = {
 };
 
 export type Node = {
-  id: Scalars["ID"];
+  id: Scalars["ID"]["output"];
 };
 
 export type PageInfo = {
   __typename?: "PageInfo";
-  endCursor?: Maybe<Scalars["String"]>;
-  hasNextPage: Scalars["Boolean"];
-  hasPreviousPage: Scalars["Boolean"];
-  startCursor?: Maybe<Scalars["String"]>;
+  endCursor?: Maybe<Scalars["String"]["output"]>;
+  hasNextPage: Scalars["Boolean"]["output"];
+  hasPreviousPage: Scalars["Boolean"]["output"];
+  startCursor?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type Query = {
@@ -268,25 +277,25 @@ export type Query = {
 };
 
 export type QuerygatewaysArgs = {
-  after?: InputMaybe<Scalars["String"]>;
-  before?: InputMaybe<Scalars["String"]>;
-  first?: InputMaybe<Scalars["Int"]>;
-  last?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QueryinferenceEndpointsArgs = {
-  after?: InputMaybe<Scalars["String"]>;
-  before?: InputMaybe<Scalars["String"]>;
-  first?: InputMaybe<Scalars["Int"]>;
-  last?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QuerynodeArgs = {
-  id: Scalars["ID"];
+  id: Scalars["ID"]["input"];
 };
 
 export type RevokeGatewayKeyInput = {
-  gatewayKeyId: Scalars["ID"];
+  gatewayKeyId: Scalars["ID"]["input"];
 };
 
 export type RevokeGatewayKeyPayload = {
@@ -295,11 +304,11 @@ export type RevokeGatewayKeyPayload = {
 };
 
 export type UpdateGatewayInput = {
-  gatewayId: Scalars["ID"];
-  inferenceEndpointIds: Array<Scalars["ID"]>;
-  logPayload: Scalars["Boolean"];
-  logTraffic: Scalars["Boolean"];
-  name: Scalars["String"];
+  gatewayId: Scalars["ID"]["input"];
+  inferenceEndpointIds: Array<Scalars["ID"]["input"]>;
+  logPayload: Scalars["Boolean"]["input"];
+  logTraffic: Scalars["Boolean"]["input"];
+  name: Scalars["String"]["input"];
 };
 
 export type UpdateGatewayPayload = {
@@ -308,15 +317,15 @@ export type UpdateGatewayPayload = {
 };
 
 export type UpdateInferenceEndpointInput = {
-  deploymentName?: InputMaybe<Scalars["String"]>;
-  endpoint?: InputMaybe<Scalars["String"]>;
-  inferenceEndpointId: Scalars["ID"];
-  key?: InputMaybe<Scalars["String"]>;
-  modelName?: InputMaybe<Scalars["String"]>;
-  modelVersion?: InputMaybe<Scalars["String"]>;
-  name: Scalars["String"];
-  platform: Scalars["String"];
-  region?: InputMaybe<Scalars["String"]>;
+  deploymentName?: InputMaybe<Scalars["String"]["input"]>;
+  endpoint?: InputMaybe<Scalars["String"]["input"]>;
+  inferenceEndpointId: Scalars["ID"]["input"];
+  key?: InputMaybe<Scalars["String"]["input"]>;
+  modelName?: InputMaybe<Scalars["String"]["input"]>;
+  modelVersion?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
+  platform: Scalars["String"]["input"];
+  region?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type UpdateInferenceEndpointPayload = {
@@ -326,8 +335,8 @@ export type UpdateInferenceEndpointPayload = {
 
 export type Viewer = {
   __typename?: "Viewer";
-  email: Scalars["String"];
-  id: Scalars["ID"];
+  email: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -435,12 +444,18 @@ export type DirectiveResolverFn<
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> =
+  {
+    Node: Gateway | GatewayKey | InferenceEndpoint;
+  };
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AddGatewayKeyInput: AddGatewayKeyInput;
   AddGatewayKeyPayload: ResolverTypeWrapper<AddGatewayKeyPayload>;
   AzureModelDeployment: ResolverTypeWrapper<AzureModelDeployment>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   CreateGatewayInput: CreateGatewayInput;
   CreateGatewayPayload: ResolverTypeWrapper<CreateGatewayPayload>;
   CreateInferenceEndpointInput: CreateInferenceEndpointInput;
@@ -453,26 +468,23 @@ export type ResolversTypes = {
   GatewayKey: ResolverTypeWrapper<GatewayKey>;
   GatewayKeyConnection: ResolverTypeWrapper<GatewayKeyConnection>;
   GatewayKeyEdge: ResolverTypeWrapper<GatewayKeyEdge>;
-  ID: ResolverTypeWrapper<Scalars["ID"]>;
+  ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
   ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
   ImportAzureModelDeploymentsPayload: ResolverTypeWrapper<ImportAzureModelDeploymentsPayload>;
   InferenceEndpoint: ResolverTypeWrapper<InferenceEndpoint>;
   InferenceEndpointConnection: ResolverTypeWrapper<InferenceEndpointConnection>;
   InferenceEndpointEdge: ResolverTypeWrapper<InferenceEndpointEdge>;
-  Int: ResolverTypeWrapper<Scalars["Int"]>;
+  Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   LoginInput: LoginInput;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
   Mutation: ResolverTypeWrapper<{}>;
-  Node:
-    | ResolversTypes["Gateway"]
-    | ResolversTypes["GatewayKey"]
-    | ResolversTypes["InferenceEndpoint"];
+  Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>["Node"]>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   RevokeGatewayKeyInput: RevokeGatewayKeyInput;
   RevokeGatewayKeyPayload: ResolverTypeWrapper<RevokeGatewayKeyPayload>;
-  String: ResolverTypeWrapper<Scalars["String"]>;
+  String: ResolverTypeWrapper<Scalars["String"]["output"]>;
   UpdateGatewayInput: UpdateGatewayInput;
   UpdateGatewayPayload: ResolverTypeWrapper<UpdateGatewayPayload>;
   UpdateInferenceEndpointInput: UpdateInferenceEndpointInput;
@@ -485,7 +497,7 @@ export type ResolversParentTypes = {
   AddGatewayKeyInput: AddGatewayKeyInput;
   AddGatewayKeyPayload: AddGatewayKeyPayload;
   AzureModelDeployment: AzureModelDeployment;
-  Boolean: Scalars["Boolean"];
+  Boolean: Scalars["Boolean"]["output"];
   CreateGatewayInput: CreateGatewayInput;
   CreateGatewayPayload: CreateGatewayPayload;
   CreateInferenceEndpointInput: CreateInferenceEndpointInput;
@@ -498,26 +510,23 @@ export type ResolversParentTypes = {
   GatewayKey: GatewayKey;
   GatewayKeyConnection: GatewayKeyConnection;
   GatewayKeyEdge: GatewayKeyEdge;
-  ID: Scalars["ID"];
+  ID: Scalars["ID"]["output"];
   ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
   ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
   ImportAzureModelDeploymentsPayload: ImportAzureModelDeploymentsPayload;
   InferenceEndpoint: InferenceEndpoint;
   InferenceEndpointConnection: InferenceEndpointConnection;
   InferenceEndpointEdge: InferenceEndpointEdge;
-  Int: Scalars["Int"];
+  Int: Scalars["Int"]["output"];
   LoginInput: LoginInput;
   LoginPayload: LoginPayload;
   Mutation: {};
-  Node:
-    | ResolversParentTypes["Gateway"]
-    | ResolversParentTypes["GatewayKey"]
-    | ResolversParentTypes["InferenceEndpoint"];
+  Node: ResolversInterfaceTypes<ResolversParentTypes>["Node"];
   PageInfo: PageInfo;
   Query: {};
   RevokeGatewayKeyInput: RevokeGatewayKeyInput;
   RevokeGatewayKeyPayload: RevokeGatewayKeyPayload;
-  String: Scalars["String"];
+  String: Scalars["String"]["output"];
   UpdateGatewayInput: UpdateGatewayInput;
   UpdateGatewayPayload: UpdateGatewayPayload;
   UpdateInferenceEndpointInput: UpdateInferenceEndpointInput;
