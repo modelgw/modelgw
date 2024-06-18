@@ -49,6 +49,8 @@ model GatewayInferenceEndpoint {
 model Gateway {
   id   String @id @default(cuid())
   name String
+  logTraffic Boolean @default(false) @map("log_traffic")
+  logPayload Boolean @default(false) @map("log_payload")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

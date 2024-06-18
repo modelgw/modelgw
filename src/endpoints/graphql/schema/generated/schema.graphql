@@ -63,6 +63,8 @@ type Gateway implements Node {
     first: Int
     last: Int
   ): GatewayKeyConnection
+  logPayload: Boolean!
+  logTraffic: Boolean!
   name: String!
   status: String!
   updatedAt: String!
@@ -217,6 +219,8 @@ type RevokeGatewayKeyPayload {
 input UpdateGatewayInput {
   gatewayId: ID!
   inferenceEndpointIds: [ID!]!
+  logPayload: Boolean!
+  logTraffic: Boolean!
   name: String!
 }
 

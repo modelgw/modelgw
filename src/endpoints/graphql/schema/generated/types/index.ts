@@ -77,6 +77,8 @@ export type Gateway = Node & {
   id: Scalars["ID"];
   inferenceEndpoints?: Maybe<GatewayInferenceEndpointConnection>;
   keys?: Maybe<GatewayKeyConnection>;
+  logPayload: Scalars["Boolean"];
+  logTraffic: Scalars["Boolean"];
   name: Scalars["String"];
   status: Scalars["String"];
   updatedAt: Scalars["String"];
@@ -295,6 +297,8 @@ export type RevokeGatewayKeyPayload = {
 export type UpdateGatewayInput = {
   gatewayId: Scalars["ID"];
   inferenceEndpointIds: Array<Scalars["ID"]>;
+  logPayload: Scalars["Boolean"];
+  logTraffic: Scalars["Boolean"];
   name: Scalars["String"];
 };
 
@@ -604,6 +608,8 @@ export type GatewayResolvers<
     ContextType,
     Partial<GatewaykeysArgs>
   >;
+  logPayload?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  logTraffic?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   status?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;

@@ -15,6 +15,8 @@ export const gatewayTypeDefs = gql`
     id: ID!
     name: String!
     status: String!
+    logTraffic: Boolean!
+    logPayload: Boolean!
 
     createdAt: String!
     updatedAt: String!

@@ -14,6 +14,8 @@ export const updateGatewayTypeDefs = gql`
   input UpdateGatewayInput {
     gatewayId: ID!
     name: String!
+    logTraffic: Boolean!
+    logPayload: Boolean!
     inferenceEndpointIds: [ID!]!
   }
 
@@ -25,6 +27,8 @@ export const updateGatewayTypeDefs = gql`
 export const UpdateGatewayInputSchema = z.object({
   gatewayId: GatewayValidations.gatewayId,
   name: GatewayValidations.name,
+  logTraffic: z.boolean(),
+  logPayload: z.boolean(),
   inferenceEndpointIds: z.array(InferenceEndpointValidations.inferenceEndpointId),
 });
 
@@ -40,6 +44,8 @@ const resolve = async (
   const gateway = await prismaClient.gateway.update({
     data: {
       name: values.name,
+      logTraffic: values.logTraffic,
+      logPayload: values.logPayload && values.logTraffic,
     },
     where: { id: gatewayId },
   });
