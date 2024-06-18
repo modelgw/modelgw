@@ -3,6 +3,8 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "[typescript]": {
     "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
@@ -10,6 +12,8 @@
   },
   "[typescriptreact]": {
     "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
@@ -17,6 +21,8 @@
   },
   "[javascript]": {
     "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
@@ -29,10 +35,13 @@
     "editor.formatOnSave": true
   },
   "[github-actions-workflow]": {
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
     "editor.tabSize": 2,
     "editor.formatOnSave": true
   },
   "[yaml]": {
+    "editor.detectIndentation": false,
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
     "editor.formatOnSave": true
