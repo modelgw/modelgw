@@ -9,6 +9,7 @@ import { Request, RequestHandler, Response } from 'express';
 import lodash from 'lodash';
 import pino from 'pino';
 import { GatewayExhaustedResponse, GatewayExhaustedResponseStatus, OpenAIUnauthorizedResponse, OpenAIUnauthorizedResponseStatus } from './response';
+import { StreamCollectTransform } from './StreamCollectTransform';
 import { createHeadersFromRequest, resetThrottlingEndpoints, setEndpointStatus, shuffleArray } from './utils';
 
 export type GatewayResult = {
@@ -107,7 +108,11 @@ export async function requestEndpoint({ req, res, gateway, endpoint, prismaClien
   }
 
   if (gateway.logTraffic) {
-    logger.debug({ url, body: gateway.logPayload ? body : undefined }, 'Sending request to inference endpoint');
+    logger.debug({
+      url,
+      body: gateway.logPayload ? body : undefined,
+      method: req.method,
+    }, 'Sending request to inference endpoint');
   }
   const startTime = performance.now();
   try {
@@ -125,7 +130,7 @@ export async function requestEndpoint({ req, res, gateway, endpoint, prismaClien
         error: error.code,
         status: error.status,
         headers: error.response?.headers,
-        duration: endTime - startTime,
+        duration: (endTime - startTime) / 1000,
       }, 'Inference endpoint request failed with axios error');
       // Access to config, request, and response
       if (error.response) {
@@ -146,22 +151,36 @@ export async function requestEndpoint({ req, res, gateway, endpoint, prismaClien
     } else {
       logger.error({
         error: error,
-        duration: endTime - startTime,
+        duration: (endTime - startTime) / 1000,
       }, 'Inference endpoint request failed');
       await setEndpointStatus(endpoint.id, InferenceEndpointConst.Status.Error, 30, String(error), prismaClient);
     }
     return false;
   }
   // got 2xx response
-  const endTime = performance.now();
   if (gateway.logTraffic) {
     logger.info({
       status: fetchResponse.status,
       headers: fetchResponse.headers,
-      duration: endTime - startTime,
-    }, 'Inference endpoint request completed');
+      duration: (performance.now() - startTime) / 1000,
+    }, 'Inference endpoint request successful. Starting to stream response');
   }
-  res.header({ ...fetchResponse.headers, 'x-modelgw-inference-endpoint-id': endpoint.id.toString() });
-  fetchResponse.data.pipe(res);
+  const gatewayResponseHeaders = { ...fetchResponse.headers, 'x-modelgw-inference-endpoint-id': endpoint.id.toString() };
+  res.header(gatewayResponseHeaders);
+
+  const transform = new StreamCollectTransform();
+  transform.on('close', () => {
+    if (gateway.logTraffic) {
+      logger.info({
+        status: fetchResponse.status,
+        headers: gatewayResponseHeaders,
+        duration: (performance.now() - startTime) / 1000,
+        body: gateway.logPayload ? transform.content : undefined,
+        firstTokenTime: transform.firstTokenTime ? (transform.firstTokenTime - startTime) / 1000 : undefined,
+      }, 'Inference endpoint request completed');
+    }
+  });
+  fetchResponse.data.pipe(transform).pipe(res);
+
   return true;
 }
