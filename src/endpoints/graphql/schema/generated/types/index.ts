@@ -90,6 +90,8 @@ export type Gateway = Node & {
   logTraffic: Scalars["Boolean"]["output"];
   name: Scalars["String"]["output"];
   status: Scalars["String"]["output"];
+  tracePayload: Scalars["Boolean"]["output"];
+  traceTraffic: Scalars["Boolean"]["output"];
   updatedAt: Scalars["String"]["output"];
 };
 
@@ -309,6 +311,8 @@ export type UpdateGatewayInput = {
   logPayload: Scalars["Boolean"]["input"];
   logTraffic: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
+  tracePayload: Scalars["Boolean"]["input"];
+  traceTraffic: Scalars["Boolean"]["input"];
 };
 
 export type UpdateGatewayPayload = {
@@ -621,6 +625,8 @@ export type GatewayResolvers<
   logTraffic?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   status?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  tracePayload?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  traceTraffic?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

@@ -67,6 +67,8 @@ type Gateway implements Node {
   logTraffic: Boolean!
   name: String!
   status: String!
+  tracePayload: Boolean!
+  traceTraffic: Boolean!
   updatedAt: String!
 }
 
@@ -222,6 +224,8 @@ input UpdateGatewayInput {
   logPayload: Boolean!
   logTraffic: Boolean!
   name: String!
+  tracePayload: Boolean!
+  traceTraffic: Boolean!
 }
 
 type UpdateGatewayPayload {

@@ -3,6 +3,12 @@ import express, { NextFunction, Request, Response } from 'express';
 import requestIp from 'request-ip';
 import { createGatewayHandler } from './handler';
 
+declare module 'http' {
+  interface IncomingMessage {
+    rawBody: string;
+  }
+}
+
 function asyncErrorBoundary(func: (req: Request, res: Response, next: NextFunction) => void) {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
@@ -24,7 +30,11 @@ export function createGatewayServer(prismaClient: any, GATEWAY_PORT: number) {
   var app = express();
   app.disable('x-powered-by');
   app.use(requestIp.mw());
-  app.use(express.json());
+  app.use(express.json({
+    verify(req, _res, buf, _encoding) {
+      req.rawBody = buf.toString();
+    },
+  }));
   app.all('/*', asyncErrorBoundary(createGatewayHandler({ prismaClient })));
   app.use(errorHandler);
 

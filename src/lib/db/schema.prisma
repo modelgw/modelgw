@@ -25,7 +25,8 @@ model InferenceEndpoint {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  gateways GatewayInferenceEndpoint[]
+  gateways                 GatewayInferenceEndpoint[]
+  InferenceEndpointRequest InferenceEndpointRequest[]
 
   @@index([status], type: Hash)
   @@map("inference_endpoints")
@@ -47,16 +48,19 @@ model GatewayInferenceEndpoint {
 }
 
 model Gateway {
-  id   String @id @default(cuid())
-  name String
-  logTraffic Boolean @default(false) @map("log_traffic")
-  logPayload Boolean @default(false) @map("log_payload")
+  id           String  @id @default(cuid())
+  name         String
+  traceTraffic Boolean @default(false) @map("trace_traffic")
+  tracePayload Boolean @default(false) @map("trace_payload")
+  logTraffic   Boolean @default(false) @map("log_traffic")
+  logPayload   Boolean @default(false) @map("log_payload")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   gatewayKeys        GatewayKey[]
   inferenceEndpoints GatewayInferenceEndpoint[]
+  gatewayRequests    GatewayRequest[]
 
   @@map("gateways")
 }
@@ -71,11 +75,104 @@ model GatewayKey {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  gateway   Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
-  gatewayId String  @map("gateway_id")
+  gateway         Gateway          @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  gatewayId       String           @map("gateway_id")
+  gatewayRequests GatewayRequest[]
 
   @@index([keyHash])
   @@index([status])
   @@index([gatewayId])
   @@map("gateway_keys")
+}
+
+model GatewayRequest {
+  id          String  @id @default(cuid())
+  ip          String
+  url         String
+  body        String?
+  contentType String? @map("content_type")
+  requestId   String  @map("request_id")
+
+  topP        Float?   @map("top_p")
+  tools       Boolean?
+  seed        Int?
+  stream      Boolean?
+  temperature Float?
+  maxTokens   Int?     @map("max_tokens")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  gateway                   Gateway                    @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  gatewayId                 String                     @map("gateway_id")
+  gatewayKey                GatewayKey?                @relation(fields: [gatewayKeyId], references: [id], onDelete: Restrict)
+  gatewayKeyId              String?                    @map("gateway_key_id")
+  inferenceEndpointRequests InferenceEndpointRequest[]
+  gatewayResponse           GatewayResponse?
+
+  @@index([requestId])
+  @@index([createdAt(sort: Desc)])
+  @@index([gatewayId])
+  @@index([gatewayKeyId])
+  @@map("gateway_requests")
+}
+
+model GatewayResponse {
+  id         String  @id @default(cuid())
+  duration   Float
+  statusCode Int     @map("status_code")
+  headers    Json
+  body       String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  gatewayRequest   GatewayRequest @relation(fields: [gatewayRequestId], references: [id], onDelete: Cascade)
+  gatewayRequestId String         @unique @map("gateway_request_id")
+
+  inferenceEndpointResponse   InferenceEndpointResponse? @relation(fields: [inferenceEndpointResponseId], references: [id], onDelete: Cascade)
+  inferenceEndpointResponseId String?                    @unique @map("inference_endpoint_response_id")
+
+  @@index([statusCode])
+  @@index([gatewayRequestId])
+  @@index([inferenceEndpointResponseId])
+  @@map("gateway_responses")
+}
+
+model InferenceEndpointRequest {
+  id     String  @id @default(cuid())
+  url    String
+  method String
+  body   String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  gatewayRequest            GatewayRequest             @relation(fields: [gatewayRequestId], references: [id], onDelete: Cascade)
+  gatewayRequestId          String                     @map("gateway_request_id")
+  inferenceEndpoint         InferenceEndpoint          @relation(fields: [inferenceEndpointId], references: [id], onDelete: Cascade)
+  inferenceEndpointId       String                     @map("inference_endpoint_id")
+  inferenceEndpointResponse InferenceEndpointResponse?
+
+  @@index([gatewayRequestId])
+  @@index([inferenceEndpointId])
+  @@map("inference_endpoint_requests")
+}
+
+model InferenceEndpointResponse {
+  id                String  @id @default(cuid())
+  statusCode        Int     @map("status_code")
+  duration          Float
+  headers           Json
+  body              String?
+  choices           Int?
+  systemFingerprint String? @map("system_fingerprint")
+  promptTokens      Int?    @map("prompt_tokens")
+  completionTokens  Int?    @map("completion_tokens")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  inferenceEndpointRequest   InferenceEndpointRequest @relation(fields: [inferenceEndpointRequestId], references: [id], onDelete: Cascade)
+  inferenceEndpointRequestId String                   @unique @map("inference_endpoint_request_id")
+  gatewayResponse            GatewayResponse?
+
+  @@index([inferenceEndpointRequestId])
+  @@map("inference_endpoint_responses")
 }
