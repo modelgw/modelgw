@@ -16,6 +16,7 @@ export const permissions = shield({
     '*': deny,
     azureModelDeployments: isAuthenticated,
     gateways: isAuthenticated,
+    gatewayRequests: isAuthenticated,
     inferenceEndpoints: isAuthenticated,
     node: isAuthenticated,
     viewer: isAuthenticated,

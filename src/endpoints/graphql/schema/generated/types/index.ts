@@ -1,4 +1,8 @@
-import { GraphQLResolveInfo } from "graphql";
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from "graphql";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -29,6 +33,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
+  JSONObject: { input: any; output: any };
 };
 
 export type AddGatewayKeyInput = {
@@ -78,6 +83,11 @@ export type CreateInferenceEndpointInput = {
 export type CreateInferenceEndpointPayload = {
   __typename?: "CreateInferenceEndpointPayload";
   inferenceEndpoint?: Maybe<InferenceEndpoint>;
+};
+
+export type DateTimeFilter = {
+  gte?: InputMaybe<Scalars["String"]["input"]>;
+  lte?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type Gateway = Node & {
@@ -159,6 +169,55 @@ export type GatewayKeyEdge = {
   node?: Maybe<GatewayKey>;
 };
 
+export type GatewayRequest = Node & {
+  __typename?: "GatewayRequest";
+  body?: Maybe<Scalars["String"]["output"]>;
+  contentType?: Maybe<Scalars["String"]["output"]>;
+  createdAt: Scalars["String"]["output"];
+  gateway: Gateway;
+  gatewayKey: GatewayKey;
+  gatewayResponse?: Maybe<GatewayResponse>;
+  id: Scalars["ID"]["output"];
+  ip: Scalars["String"]["output"];
+  maxTokens?: Maybe<Scalars["Int"]["output"]>;
+  requestId: Scalars["String"]["output"];
+  seed?: Maybe<Scalars["Int"]["output"]>;
+  stream?: Maybe<Scalars["Boolean"]["output"]>;
+  temperature?: Maybe<Scalars["Float"]["output"]>;
+  tools?: Maybe<Scalars["Boolean"]["output"]>;
+  topP?: Maybe<Scalars["Float"]["output"]>;
+  url: Scalars["String"]["output"];
+};
+
+export type GatewayRequestConnection = {
+  __typename?: "GatewayRequestConnection";
+  edges?: Maybe<Array<Maybe<GatewayRequestEdge>>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars["Int"]["output"];
+};
+
+export type GatewayRequestEdge = {
+  __typename?: "GatewayRequestEdge";
+  cursor: Scalars["String"]["output"];
+  node?: Maybe<GatewayRequest>;
+};
+
+export type GatewayRequestFilter = {
+  createdAt?: InputMaybe<DateTimeFilter>;
+  gatewayId?: InputMaybe<Scalars["ID"]["input"]>;
+};
+
+export type GatewayResponse = {
+  __typename?: "GatewayResponse";
+  body?: Maybe<Scalars["String"]["output"]>;
+  createdAt: Scalars["String"]["output"];
+  duration: Scalars["Float"]["output"];
+  headers: Scalars["JSONObject"]["output"];
+  id: Scalars["ID"]["output"];
+  inferenceEndpointResponse?: Maybe<InferenceEndpointResponse>;
+  statusCode: Scalars["Int"]["output"];
+};
+
 export type ImportAzureModelDeploymentInput = {
   inferenceEndpointName?: InputMaybe<Scalars["String"]["input"]>;
   modelDeploymentId: Scalars["String"]["input"];
@@ -199,6 +258,30 @@ export type InferenceEndpointEdge = {
   __typename?: "InferenceEndpointEdge";
   cursor: Scalars["String"]["output"];
   node?: Maybe<InferenceEndpoint>;
+};
+
+export type InferenceEndpointRequest = {
+  __typename?: "InferenceEndpointRequest";
+  body?: Maybe<Scalars["String"]["output"]>;
+  createdAt: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
+  inferenceEndpoint: InferenceEndpoint;
+  method: Scalars["String"]["output"];
+  url: Scalars["String"]["output"];
+};
+
+export type InferenceEndpointResponse = {
+  __typename?: "InferenceEndpointResponse";
+  body?: Maybe<Scalars["String"]["output"]>;
+  choices?: Maybe<Scalars["Int"]["output"]>;
+  completionTokens?: Maybe<Scalars["Int"]["output"]>;
+  createdAt: Scalars["String"]["output"];
+  duration: Scalars["Float"]["output"];
+  headers: Scalars["JSONObject"]["output"];
+  id: Scalars["ID"]["output"];
+  inferenceEndpointRequest?: Maybe<InferenceEndpointRequest>;
+  promptTokens?: Maybe<Scalars["Int"]["output"]>;
+  statusCode: Scalars["Int"]["output"];
 };
 
 export type LoginInput = {
@@ -272,10 +355,19 @@ export type PageInfo = {
 export type Query = {
   __typename?: "Query";
   azureModelDeployments: Array<AzureModelDeployment>;
+  gatewayRequests?: Maybe<GatewayRequestConnection>;
   gateways?: Maybe<GatewayConnection>;
   inferenceEndpoints?: Maybe<InferenceEndpointConnection>;
   node?: Maybe<Node>;
   viewer?: Maybe<Viewer>;
+};
+
+export type QuerygatewayRequestsArgs = {
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  before?: InputMaybe<Scalars["String"]["input"]>;
+  filter?: InputMaybe<GatewayRequestFilter>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  last?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type QuerygatewaysArgs = {
@@ -451,7 +543,7 @@ export type DirectiveResolverFn<
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> =
   {
-    Node: Gateway | GatewayKey | InferenceEndpoint;
+    Node: Gateway | GatewayKey | GatewayRequest | InferenceEndpoint;
   };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -464,6 +556,8 @@ export type ResolversTypes = {
   CreateGatewayPayload: ResolverTypeWrapper<CreateGatewayPayload>;
   CreateInferenceEndpointInput: CreateInferenceEndpointInput;
   CreateInferenceEndpointPayload: ResolverTypeWrapper<CreateInferenceEndpointPayload>;
+  DateTimeFilter: DateTimeFilter;
+  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
   Gateway: ResolverTypeWrapper<Gateway>;
   GatewayConnection: ResolverTypeWrapper<GatewayConnection>;
   GatewayEdge: ResolverTypeWrapper<GatewayEdge>;
@@ -472,6 +566,11 @@ export type ResolversTypes = {
   GatewayKey: ResolverTypeWrapper<GatewayKey>;
   GatewayKeyConnection: ResolverTypeWrapper<GatewayKeyConnection>;
   GatewayKeyEdge: ResolverTypeWrapper<GatewayKeyEdge>;
+  GatewayRequest: ResolverTypeWrapper<GatewayRequest>;
+  GatewayRequestConnection: ResolverTypeWrapper<GatewayRequestConnection>;
+  GatewayRequestEdge: ResolverTypeWrapper<GatewayRequestEdge>;
+  GatewayRequestFilter: GatewayRequestFilter;
+  GatewayResponse: ResolverTypeWrapper<GatewayResponse>;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
   ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
@@ -479,7 +578,10 @@ export type ResolversTypes = {
   InferenceEndpoint: ResolverTypeWrapper<InferenceEndpoint>;
   InferenceEndpointConnection: ResolverTypeWrapper<InferenceEndpointConnection>;
   InferenceEndpointEdge: ResolverTypeWrapper<InferenceEndpointEdge>;
+  InferenceEndpointRequest: ResolverTypeWrapper<InferenceEndpointRequest>;
+  InferenceEndpointResponse: ResolverTypeWrapper<InferenceEndpointResponse>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
+  JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]["output"]>;
   LoginInput: LoginInput;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -506,6 +608,8 @@ export type ResolversParentTypes = {
   CreateGatewayPayload: CreateGatewayPayload;
   CreateInferenceEndpointInput: CreateInferenceEndpointInput;
   CreateInferenceEndpointPayload: CreateInferenceEndpointPayload;
+  DateTimeFilter: DateTimeFilter;
+  Float: Scalars["Float"]["output"];
   Gateway: Gateway;
   GatewayConnection: GatewayConnection;
   GatewayEdge: GatewayEdge;
@@ -514,6 +618,11 @@ export type ResolversParentTypes = {
   GatewayKey: GatewayKey;
   GatewayKeyConnection: GatewayKeyConnection;
   GatewayKeyEdge: GatewayKeyEdge;
+  GatewayRequest: GatewayRequest;
+  GatewayRequestConnection: GatewayRequestConnection;
+  GatewayRequestEdge: GatewayRequestEdge;
+  GatewayRequestFilter: GatewayRequestFilter;
+  GatewayResponse: GatewayResponse;
   ID: Scalars["ID"]["output"];
   ImportAzureModelDeploymentInput: ImportAzureModelDeploymentInput;
   ImportAzureModelDeploymentsInput: ImportAzureModelDeploymentsInput;
@@ -521,7 +630,10 @@ export type ResolversParentTypes = {
   InferenceEndpoint: InferenceEndpoint;
   InferenceEndpointConnection: InferenceEndpointConnection;
   InferenceEndpointEdge: InferenceEndpointEdge;
+  InferenceEndpointRequest: InferenceEndpointRequest;
+  InferenceEndpointResponse: InferenceEndpointResponse;
   Int: Scalars["Int"]["output"];
+  JSONObject: Scalars["JSONObject"]["output"];
   LoginInput: LoginInput;
   LoginPayload: LoginPayload;
   Mutation: {};
@@ -718,6 +830,86 @@ export type GatewayKeyEdgeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GatewayRequestResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["GatewayRequest"] = ResolversParentTypes["GatewayRequest"]
+> = {
+  body?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  contentType?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  createdAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  gateway?: Resolver<ResolversTypes["Gateway"], ParentType, ContextType>;
+  gatewayKey?: Resolver<ResolversTypes["GatewayKey"], ParentType, ContextType>;
+  gatewayResponse?: Resolver<
+    Maybe<ResolversTypes["GatewayResponse"]>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  ip?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  maxTokens?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  requestId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  seed?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  stream?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
+  temperature?: Resolver<
+    Maybe<ResolversTypes["Float"]>,
+    ParentType,
+    ContextType
+  >;
+  tools?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
+  topP?: Resolver<Maybe<ResolversTypes["Float"]>, ParentType, ContextType>;
+  url?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GatewayRequestConnectionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["GatewayRequestConnection"] = ResolversParentTypes["GatewayRequestConnection"]
+> = {
+  edges?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["GatewayRequestEdge"]>>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<ResolversTypes["PageInfo"], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GatewayRequestEdgeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["GatewayRequestEdge"] = ResolversParentTypes["GatewayRequestEdge"]
+> = {
+  cursor?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  node?: Resolver<
+    Maybe<ResolversTypes["GatewayRequest"]>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GatewayResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["GatewayResponse"] = ResolversParentTypes["GatewayResponse"]
+> = {
+  body?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  headers?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  inferenceEndpointResponse?: Resolver<
+    Maybe<ResolversTypes["InferenceEndpointResponse"]>,
+    ParentType,
+    ContextType
+  >;
+  statusCode?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ImportAzureModelDeploymentsPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["ImportAzureModelDeploymentsPayload"] = ResolversParentTypes["ImportAzureModelDeploymentsPayload"]
@@ -786,6 +978,57 @@ export type InferenceEndpointEdgeResolvers<
   >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export type InferenceEndpointRequestResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["InferenceEndpointRequest"] = ResolversParentTypes["InferenceEndpointRequest"]
+> = {
+  body?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  inferenceEndpoint?: Resolver<
+    ResolversTypes["InferenceEndpoint"],
+    ParentType,
+    ContextType
+  >;
+  method?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InferenceEndpointResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["InferenceEndpointResponse"] = ResolversParentTypes["InferenceEndpointResponse"]
+> = {
+  body?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  choices?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  completionTokens?: Resolver<
+    Maybe<ResolversTypes["Int"]>,
+    ParentType,
+    ContextType
+  >;
+  createdAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  headers?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  inferenceEndpointRequest?: Resolver<
+    Maybe<ResolversTypes["InferenceEndpointRequest"]>,
+    ParentType,
+    ContextType
+  >;
+  promptTokens?: Resolver<
+    Maybe<ResolversTypes["Int"]>,
+    ParentType,
+    ContextType
+  >;
+  statusCode?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface JSONObjectScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes["JSONObject"], any> {
+  name: "JSONObject";
+}
 
 export type LoginPayloadResolvers<
   ContextType = any,
@@ -856,7 +1099,7 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Gateway" | "GatewayKey" | "InferenceEndpoint",
+    "Gateway" | "GatewayKey" | "GatewayRequest" | "InferenceEndpoint",
     ParentType,
     ContextType
   >;
@@ -894,6 +1137,12 @@ export type QueryResolvers<
     Array<ResolversTypes["AzureModelDeployment"]>,
     ParentType,
     ContextType
+  >;
+  gatewayRequests?: Resolver<
+    Maybe<ResolversTypes["GatewayRequestConnection"]>,
+    ParentType,
+    ContextType,
+    Partial<QuerygatewayRequestsArgs>
   >;
   gateways?: Resolver<
     Maybe<ResolversTypes["GatewayConnection"]>,
@@ -970,10 +1219,17 @@ export type Resolvers<ContextType = any> = {
   GatewayKey?: GatewayKeyResolvers<ContextType>;
   GatewayKeyConnection?: GatewayKeyConnectionResolvers<ContextType>;
   GatewayKeyEdge?: GatewayKeyEdgeResolvers<ContextType>;
+  GatewayRequest?: GatewayRequestResolvers<ContextType>;
+  GatewayRequestConnection?: GatewayRequestConnectionResolvers<ContextType>;
+  GatewayRequestEdge?: GatewayRequestEdgeResolvers<ContextType>;
+  GatewayResponse?: GatewayResponseResolvers<ContextType>;
   ImportAzureModelDeploymentsPayload?: ImportAzureModelDeploymentsPayloadResolvers<ContextType>;
   InferenceEndpoint?: InferenceEndpointResolvers<ContextType>;
   InferenceEndpointConnection?: InferenceEndpointConnectionResolvers<ContextType>;
   InferenceEndpointEdge?: InferenceEndpointEdgeResolvers<ContextType>;
+  InferenceEndpointRequest?: InferenceEndpointRequestResolvers<ContextType>;
+  InferenceEndpointResponse?: InferenceEndpointResponseResolvers<ContextType>;
+  JSONObject?: GraphQLScalarType;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;

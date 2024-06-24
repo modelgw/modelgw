@@ -48,6 +48,11 @@ type CreateInferenceEndpointPayload {
   inferenceEndpoint: InferenceEndpoint
 }
 
+input DateTimeFilter {
+  gte: String
+  lte: String
+}
+
 type Gateway implements Node {
   createdAt: String!
   id: ID!
@@ -115,6 +120,51 @@ type GatewayKeyEdge {
   node: GatewayKey
 }
 
+type GatewayRequest implements Node {
+  body: String
+  contentType: String
+  createdAt: String!
+  gateway: Gateway!
+  gatewayKey: GatewayKey!
+  gatewayResponse: GatewayResponse
+  id: ID!
+  ip: String!
+  maxTokens: Int
+  requestId: String!
+  seed: Int
+  stream: Boolean
+  temperature: Float
+  tools: Boolean
+  topP: Float
+  url: String!
+}
+
+type GatewayRequestConnection {
+  edges: [GatewayRequestEdge]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type GatewayRequestEdge {
+  cursor: String!
+  node: GatewayRequest
+}
+
+input GatewayRequestFilter {
+  createdAt: DateTimeFilter
+  gatewayId: ID
+}
+
+type GatewayResponse {
+  body: String
+  createdAt: String!
+  duration: Float!
+  headers: JSONObject!
+  id: ID!
+  inferenceEndpointResponse: InferenceEndpointResponse
+  statusCode: Int!
+}
+
 input ImportAzureModelDeploymentInput {
   inferenceEndpointName: String
   modelDeploymentId: String!
@@ -152,6 +202,30 @@ type InferenceEndpointEdge {
   cursor: String!
   node: InferenceEndpoint
 }
+
+type InferenceEndpointRequest {
+  body: String
+  createdAt: String!
+  id: ID!
+  inferenceEndpoint: InferenceEndpoint!
+  method: String!
+  url: String!
+}
+
+type InferenceEndpointResponse {
+  body: String
+  choices: Int
+  completionTokens: Int
+  createdAt: String!
+  duration: Float!
+  headers: JSONObject!
+  id: ID!
+  inferenceEndpointRequest: InferenceEndpointRequest
+  promptTokens: Int
+  statusCode: Int!
+}
+
+scalar JSONObject
 
 input LoginInput {
   email: String!
@@ -194,6 +268,13 @@ type PageInfo {
 
 type Query {
   azureModelDeployments: [AzureModelDeployment!]!
+  gatewayRequests(
+    after: String
+    before: String
+    filter: GatewayRequestFilter
+    first: Int
+    last: Int
+  ): GatewayRequestConnection
   gateways(
     after: String
     before: String

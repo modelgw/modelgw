@@ -44,6 +44,7 @@ export const createServerContextMiddlewareOptionsAsync = async (prismaClient: Pr
       const token = authorization ? authorization.split(' ')[1] : ctx.req.cookies?.token;
       const user = getUser(token) ?? undefined;
 
+      //@ts-ignore
       const clientIp = ctx.req.clientIp;
       const requestId = createId();
       const logger = mainLogger.child({ clientIp, requestId, user: user ? { id: user?.id } : undefined });
