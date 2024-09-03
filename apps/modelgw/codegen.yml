@@ -1,0 +1,29 @@
+overwrite: true
+schema: 'apps/modelgw/src/endpoints/graphql/schema/index.ts'
+documents: null
+generates:
+  apps/modelgw/src/endpoints/graphql/schema/generated/types/index.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-resolvers
+    config:
+      namingConvention:
+        typeNames: keep
+        enumValues: keep
+      scalars:
+        Date: Date
+        DateTime: Date
+  apps/modelgw/src/endpoints/graphql/schema/generated/graphql.schema.json:
+    plugins:
+      - 'introspection'
+  apps/modelgw/src/endpoints/graphql/schema/generated/schema.graphql:
+    plugins:
+      - schema-ast
+    config:
+      includeDirectives: true
+      commentDescriptions: true
+      sort: true
+require:
+  - ts-node/register
+  - tsconfig-paths/register

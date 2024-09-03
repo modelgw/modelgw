@@ -1,0 +1,133 @@
+{
+  "name": "modelgw",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/modelgw/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "dependsOn": [
+        "prisma-generate"
+      ]
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "buildTarget": "modelgw:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "modelgw:build:development"
+        },
+        "production": {
+          "buildTarget": "modelgw:build:production"
+        }
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": [
+            "modelgw/modelgw"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
+    },
+    "prisma-deploy": {
+      "executor": "@nx-tools/nx-prisma:deploy",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-format": {
+      "executor": "@nx-tools/nx-prisma:format",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-generate": {
+      "executor": "@nx-tools/nx-prisma:generate",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-migrate": {
+      "executor": "@nx-tools/nx-prisma:migrate",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-pull": {
+      "executor": "@nx-tools/nx-prisma:pull",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-push": {
+      "executor": "@nx-tools/nx-prisma:push",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-reset": {
+      "executor": "@nx-tools/nx-prisma:reset",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-resolve": {
+      "executor": "@nx-tools/nx-prisma:resolve",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-seed": {
+      "executor": "@nx-tools/nx-prisma:seed",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-status": {
+      "executor": "@nx-tools/nx-prisma:status",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-studio": {
+      "executor": "@nx-tools/nx-prisma:studio",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "prisma-validate": {
+      "executor": "@nx-tools/nx-prisma:validate",
+      "options": {
+        "schema": "apps/modelgw/src/lib/db/schema.prisma"
+      }
+    },
+    "codegen-generate": {
+      "executor": "@nx-tools/nx-graphql-codegen:generate",
+      "options": {
+        "config": "apps/modelgw/codegen.yml"
+      }
+    }
+  }
+}
