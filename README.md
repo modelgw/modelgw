@@ -34,6 +34,10 @@ Create `.env` or use environment variables to run in dev mode:
 DATABASE_URL="postgresql://modelgw:modelgw@localhost:5432/modelgw?schema=public"
 ADMIN_PORT=4000
 GATEWAY_PORT=4001
+PRISMA_FIELD_ENCRYPTION_KEY="k1.aesgcm256.VYU1Jlyf1Yu9QGDVvVjgaf8QEP1SIhOReuiPBSbeyZA="
+JWT_SECRET=jwtsecret
+ADMIN_EMAIL=<your email>
+ADMIN_PASSWORD=<your password>
 ```
 
 ### 🚀 Starting in dev mode
@@ -42,30 +46,22 @@ Install dependencies and start dev mode:
 
 ```sh
 npm ci
-npm run dev | pino-pretty
+npx nx serve modelgw | pino-pretty
 ```
 
 ## 🧰 Built-in Scripts
 
-- `npm run build` - Compiles the project. Emits files referenced in with the compiler settings from tsconfig.build.json.
-- `npm test` - Prepares and runs the unit tests.
-- `npm start` - Prepares and starts the development server by automatically restarting the node application when file changes in the `src` directory are detected.
-- `npm run dev` - Starts the development server by automatically restarting the node application when a file changes in the `src` directory are detected.
-- `npm run lint` - Identifying and reporting on patterns found in the project code, to make the code more consistent and avoid bugs.
-- `npm run format` - Formats all files supported by Prettier in the project directory and its subdirectories.
-- `npm run prisma:format` - Formats the Prisma schema file, which includes validating, formatting, and persisting the schema.
-- `npm run prisma:migrate:reset` - Drops and recreates the database, which results in data loss (for development only).
-- `npm run prisma:migrate:dev` - Updates your database using migrations during development and creates the database if it does not exist (for development only).
-- `npm run prisma:generate` - Generates Prisma Client code.
-- `npm run prisma:deploy` - Applies all pending migrations, and creates the database if it does not exist. For production use.
-
-## 🛠️ Build
-
-### 🐳 Build Docker image locally
-
-```sh
-docker build -t modelgw/modelgw:latest --progress=plain .
-```
+- `nx build modelgw` - Builds the project.
+- `nx test modelgw` - Prepares and runs the unit tests.
+- `nx serve modelgw` - Starts the development server by automatically restarting the node application when a file changes in the `src` directory are detected.
+- `nx lint modelgw` - Identifying and reporting on patterns found in the project code, to make the code more consistent and avoid bugs.
+- `nx codegen-generate modelgw` - Generates types from GraphQL.
+- `nx run prisma-reset` - Drops and recreates the database, which results in data loss (for development only).
+- `nx run prisma-migrate` - Updates your database using migrations during development and creates the database if it does not exist (for development only).
+- `nx prisma-generate modelgw` - Generates Prisma Client code.
+- `nx prisma-deploy modelgw` - Applies all pending migrations, and creates the database if it does not exist. For production use.
+- `nx show project modelgw` - See all available targets to run for a project.
+- `nx container modelgw` - Build Docker image locally.
 
 ## 📜 License
 
