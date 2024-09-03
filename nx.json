@@ -19,7 +19,6 @@
       "{workspaceRoot}/.github/workflows/ci.yml"
     ]
   },
-  "nxCloudAccessToken": "MGIwMTcwZTAtMjU4My00Zjc4LWIxOTEtOThiM2U2MmNiYTg0fHJlYWQ=",
   "plugins": [
     {
       "plugin": "@nx/webpack/plugin",
