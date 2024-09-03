@@ -64,5 +64,6 @@
       "cache": true
     }
   },
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "nxCloudAccessToken": "NDNlNzg2NzktOWIxMS00YThhLWE2YjMtYjBjZGNjYmMxMzc5fHJlYWQtd3JpdGU="
 }
