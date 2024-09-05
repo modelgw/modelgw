@@ -63,6 +63,12 @@
     },
     "container": {
       "cache": true
+    },
+    "prisma-generate": {
+      "cache": true,
+      "outputs": [
+        "{projectRoot}/node_modules/@prisma/client"
+      ]
     }
   },
   "defaultBase": "main"
