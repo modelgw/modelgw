@@ -30,3 +30,7 @@ yarn-error.log*
 
 # Nx
 /.nx
+
+# Next.js
+.next
+out

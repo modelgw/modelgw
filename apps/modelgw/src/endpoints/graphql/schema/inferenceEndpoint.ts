@@ -169,6 +169,5 @@ export const inferenceEndpointResolvers = {
   },
   InferenceEndpoint: {
     id: (obj: InferenceEndpoint) => encodeGlobalId(obj.id, 'InferenceEndpoint'),
-    name: (obj: InferenceEndpoint) => 'XXsdcdddfreeeXX' + obj.name,
   }
 };

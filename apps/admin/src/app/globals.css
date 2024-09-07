@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* @uiw/react-json-view theme */
+:root {
+  --w-rjv-font-family: monospace;
+  --w-rjv-color: #002b36;
+  --w-rjv-key-string: #002b36;
+  --w-rjv-background-color: #ffffff;
+  --w-rjv-line-color: #ebebeb;
+  --w-rjv-arrow-color: var(--w-rjv-color);
+  --w-rjv-edit-color: var(--w-rjv-color);
+  --w-rjv-info-color: #0000004d;
+  --w-rjv-update-color: #ebcb8b;
+  --w-rjv-copied-color: #002b36;
+  --w-rjv-copied-success-color: #28a745;
+
+  --w-rjv-curlybraces-color: #236a7c;
+  --w-rjv-colon-color: #002b36;
+  --w-rjv-brackets-color: #236a7c;
+  --w-rjv-quotes-color: var(--w-rjv-key-string);
+  --w-rjv-quotes-string-color: var(--w-rjv-type-string-color);
+
+  --w-rjv-type-string-color: #cb4b16;
+  --w-rjv-type-int-color: #268bd2;
+  --w-rjv-type-float-color: #859900;
+  --w-rjv-type-bigint-color: #268bd2;
+  --w-rjv-type-boolean-color: #2aa198;
+  --w-rjv-type-date-color: #586e75;
+  --w-rjv-type-url-color: #0969da;
+  --w-rjv-type-null-color: #d33682;
+  --w-rjv-type-nan-color: #859900;
+  --w-rjv-type-undefined-color: #586e75;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --w-rjv-font-family: monospace;
+    --w-rjv-color: #0184a6;
+    --w-rjv-key-string: #0184a6;
+    --w-rjv-background-color: #202020;
+    --w-rjv-line-color: #323232;
+    --w-rjv-arrow-color: var(--w-rjv-color);
+    --w-rjv-edit-color: var(--w-rjv-color);
+    --w-rjv-info-color: #656565;
+    --w-rjv-update-color: #ebcb8b;
+    --w-rjv-copied-color: #0184a6;
+    --w-rjv-copied-success-color: #28a745;
+  
+    --w-rjv-curlybraces-color: #1896b6;
+    --w-rjv-colon-color: #1896b6;
+    --w-rjv-brackets-color: #1896b6;
+    --w-rjv-quotes-color: var(--w-rjv-key-string);
+    --w-rjv-quotes-string-color: var(--w-rjv-type-string-color);
+  
+    --w-rjv-type-string-color: #cb4b16;
+    --w-rjv-type-int-color: #268bd2;
+    --w-rjv-type-float-color: #859900;
+    --w-rjv-type-bigint-color: #268bd2;
+    --w-rjv-type-boolean-color: #2aa198;
+    --w-rjv-type-date-color: #586e75;
+    --w-rjv-type-url-color: #649bd8;
+    --w-rjv-type-null-color: #d33682;
+    --w-rjv-type-nan-color: #076678;
+    --w-rjv-type-undefined-color: #586e75;
+  }
+}
+
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+}
+
+@layer components {
+  .bg-content {
+    @apply bg-white dark:bg-zinc-900
+  }
+  .bg-content-hover {
+    @apply bg-zinc-50 dark:bg-zinc-600
+  }
+  .border-content {
+    @apply border-zinc-200 dark:border-zinc-800
+  }
+  .divide-content {
+    @apply divide-zinc-200 dark:divide-zinc-800
+  }
+  .ring-content {
+    @apply ring-zinc-200/20 dark:ring-zinc-400/20
+  }
+  .text-content {
+    @apply text-zinc-800 dark:text-zinc-100
+  }
+  .text-content-secondary {
+    @apply text-zinc-600 dark:text-zinc-300
+  }
+  .bg-neutral {
+    @apply bg-zinc-100 dark:bg-zinc-950
+  }
+  .text-neutral {
+    @apply text-zinc-800 dark:text-zinc-300
+  }
+  .border-neutral {
+    @apply border-zinc-200
+  }
+  .text-primary {
+    @apply text-indigo-600 dark:text-indigo-300
+  }
+  .border-primary {
+    @apply border-indigo-600 dark:border-indigo-500
+  }
+  .text-error {
+    @apply text-red-600 dark:text-red-400
+  }
+  .text-success {
+    @apply text-green-600 dark:text-green-400
+  }
+  .text-warning {
+    @apply text-amber-600 dark:text-amber-400
+  }
+
+  .content {
+    @apply bg-content text-content shadow-sm ring-1 ring-content sm:rounded-xl md:col-span-2
+  }
+}

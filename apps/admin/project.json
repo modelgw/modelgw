@@ -1,0 +1,38 @@
+{
+  "name": "admin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/admin",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "codegen-generate": {
+      "executor": "@nx-tools/nx-graphql-codegen:generate",
+      "options": {
+        "config": "apps/admin/codegen.ts"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": [
+            "modelgw/admin"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
+    }
+  }
+}

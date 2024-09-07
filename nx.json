@@ -43,6 +43,21 @@
       "exclude": [
         "apps/modelgw-e2e/**/*"
       ]
+    },
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
     }
   ],
   "generators": {
@@ -50,6 +65,15 @@
       "release-version": {
         "packageRoot": "."
       }
+    },
+    "@nx/next": {
+      "application": {
+        "style": "tailwind",
+        "linter": "eslint"
+      }
+    },
+    "@nx/react": {
+      "library": {}
     }
   },
   "release": {
@@ -67,7 +91,12 @@
     "prisma-generate": {
       "cache": true,
       "outputs": [
-        "{projectRoot}/node_modules/@prisma/client"
+        "{workspaceRoot}/node_modules/@prisma/client"
+      ]
+    },
+    "e2e-ci--**/*": {
+      "dependsOn": [
+        "^build"
       ]
     }
   },
