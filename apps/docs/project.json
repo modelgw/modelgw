@@ -1,0 +1,33 @@
+{
+  "name": "docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/docs",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project docs --web",
+  "targets": {
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": [
+            "modelgw/docs"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=semver,pattern={{version}}",
+            "type=semver,pattern={{major}}.{{minor}}",
+            "type=semver,pattern={{major}}",
+            "type=sha"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
+    }
+  }
+}

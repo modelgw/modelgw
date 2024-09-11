@@ -1,0 +1,23 @@
+export const metadata = {
+  title: 'Admin Console',
+  description:
+    'This guide will show you how to configure your gateways using the Model Gateway Admin Console',
+}
+
+# Admin Console
+
+Admin Console is an optional app with a web-based interface that allows you to configure your gateways, gateway API keys, and connect to your existing inference endpoints. Everything you can do in the Admin Console can also be done using the Model Gateway [Management API](/management-api). In this guide, we will show you how to configure your first gateway using the Model Gateway Admin Console. {{ className: 'lead' }}
+
+## Getting started
+
+To get started, you need to have *Model Gateway* and *Model Gateway Admin Console* running on your local machine or a cloud provider. If you haven't done this yet, you can follow the [installation guide](/installation) to get Model Gateway up and running.
+
+After you have Model Gateway running, you can access the Model Gateway Admin Console at [http://localhost:3000](http://localhost:3000). Log in with the credentials you provided in the `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables of Model Gateway.
+
+## Configure your first gateway
+
+To configure your first gateway, you need to configure your Inference enpoints first. Inference endpoints are where Model Gateway forwards your AI inference requests. You can configure multiple inference endpoints and use them in your gateways. Open [http://localhost:3000/inference-endpoints](http://localhost:3000/inference-endpoints) to configure your first inference endpoints with all the necessary details.
+
+After you have configured your inference endpoints, you can create your first gateway. Open [http://localhost:3000/gateways](http://localhost:3000/gateways) to create your first gateway. You can select the inference endpoints you have configured and create a gateway.
+
+Once you have created your gateway, you need to create a gateway key that you use to authenticate your requests to the gateway. 

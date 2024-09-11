@@ -1,0 +1,29 @@
+
+export const metadata = {
+  title: 'Audit Tracing',
+  description:
+    'Model Gateway can provide audit tracing of all requests and responses to your models.',
+}
+
+# Audit Tracing
+
+Model Gateway can provide audit tracing of all requests and responses to your inference endpoints. Tracing can be enabled on desired gateways. {{ className: 'lead' }}
+
+Enabling **trace traffic** will save all requests and responses to the database. By default, only the metadata is saved. You can enable **trace payload** to save the full request and response payloads.
+
+If you want to log all requests and responses, you can enable **log traffic**. This will log all requests and responses without the payload using the default logger. You can also enable **log payload** to log the full request and response payloads.
+
+## Enabling tracing and logging
+
+Tracing can be enabled via API by setting `traceTraffic` and `tracePayload` to `true` on `Gateway`. Logging can be enabled via API by setting `logTraffic` and `logPayload` to `true` on `Gateway`.
+
+These settings can be changed also via *Admin Console* on the desired gateway.
+
+## Viewing traces
+
+Traces can be viewed via *Admin Console* at http://localhost:3000/traces. You can filter traces by a gateway, and time range. You can also view the full request and response payloads if they are enabled. Traces viewer can visualize the request and response payloads in a human-readable format and has support for streamed responses.
+
+## Exporting traces
+
+Traces can be exported via API by calling `gatewayRequests` query or directly from the database tables.
+

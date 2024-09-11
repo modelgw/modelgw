@@ -1,0 +1,154 @@
+export const metadata = {
+  title: 'Installation',
+  description:
+    '',
+}
+
+# Installation
+
+Model Gateway is available as a Docker image, which you can run on your local machine or deploy to a cloud provider. {{ className: 'lead' }}
+
+## Prerequisites
+
+To get started, you will need to have Docker installed on your machine. If you don't have Docker installed, you can download it from the [official Docker website](https://www.docker.com/products/docker-desktop).
+
+## Docker
+
+Once you have Docker installed, you need to create a network for the Model Gateway:
+
+```bash
+docker network create modelgw
+```
+
+Model Gateway requires a PostgreSQL database to store its data. You can use the following command to start a PostgreSQL database in a Docker container:
+
+```bash
+docker run --detach --restart=always --network modelgw --name postgresql \
+-e POSTGRES_USER=modelgw \
+-e POSTGRES_PASSWORD=modelgw \
+-e POSTGRES_DB=modelgw \
+-p 5432:5432 \
+postgres:16
+```
+
+Model Gateway is distributed as a Docker image, which you can pull from Docker Hub registry. To start the latest version of the Model Gateway image on your computer, run the following command:
+
+```bash
+# start the Model Gateway
+docker run --detach --restart=always --network modelgw --name modelgw \
+-e DATABASE_URL="postgresql://modelgw:modelgw@postgresql:5432/modelgw?schema=public" \
+-e PRISMA_FIELD_ENCRYPTION_KEY="k1.aesgcm256.VYU1Jlyf1Yu9QGDVvVjgaf8QEP1SIhOReuiPBSbeyZA=" \
+-e JWT_SECRET="jwtsecret" \
+-e ADMIN_EMAIL="email@example.com" \
+-e ADMIN_PASSWORD="password" \
+-p 4000:4000 \
+-p 4001:4001 \
+modelgw/modelgw:latest
+
+# start the Model Gateway Admin Console
+docker run --detach --restart=always --network modelgw --name modelgw-admin \
+-e GRAPHQL_URL=http://modelgw:4000/graphql \
+-e NEXT_PUBLIC_GATEWAY_URL=http://localhost:4001 \
+-p 3000:3000 \
+modelgw/modelgw-admin:latest
+```
+
+After running the above commands, you can access the Model Gateway Admin Console at [http://localhost:3000](http://localhost:3000). Log in with the credentials you provided in the `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables.
+
+<Note>
+  More information about the configured environment variables can be found in the [Configuration](/configuration) section.
+</Note>
+
+## Docker Compose
+
+You can also use Docker Compose to start the Model Gateway and the Admin Console. Create a `docker-compose.yml` file with the following content:
+
+```yaml
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:16
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: modelgw
+      POSTGRES_PASSWORD: modelgw
+      POSTGRES_DB: modelgw
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelgw"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  modelgw:
+    image: modelgw/modelgw:latest
+    container_name: modelgw
+    environment:
+      DATABASE_URL: "postgresql://modelgw:modelgw@postgresql:5432/modelgw?schema=public"
+      PRISMA_FIELD_ENCRYPTION_KEY: "k1.aesgcm256.VYU1Jlyf1Yu9QGDVvVjgaf8QEP1SIhOReuiPBSbeyZA="
+      JWT_SECRET: "jwtsecret"
+      ADMIN_EMAIL: "<your email>"
+      ADMIN_PASSWORD: "<your password>"
+    ports:
+      - "127.0.0.1:4000:4000"
+      - "127.0.0.1:4001:4001"
+    restart: always
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  modelgw-admin:
+    image: modelgw/modelgw-admin:latest
+    container_name: modelgw-admin
+    environment:
+      GRAPHQL_URL: http://modelgw:4000/graphql
+      NEXT_PUBLIC_GATEWAY_URL: http://localhost:4001
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: always
+    depends_on:
+      - modelgw
+```
+
+Then run the following command to start the database, Model Gateway and Admin Console:
+
+```bash
+docker-compose up -d
+```
+
+## Making your first API request
+
+Now that you have Model Gateway up and running, let's make your first API request to the inference endpoint. The inference endpoint is where you send your AI inference requests. In this example, we'll use the cURL command-line tool to make a request to the inference endpoint.
+
+```bash
+curl -v -X POST http://localhost:4001/ \
+  -H "Authorization: Bearer we-dont-have-any-yet" \
+  -H "Content-Type: application/json"
+```
+
+You should receive an error response with the message `401 Unauthorized`. This is because you need to provide a valid API key in the `Authorization` header to authenticate your request. 
+
+```http
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+
+{
+  "error": {
+    "message": "Incorrect Model Gateway API key provided",
+    "type": "invalid_request_error",
+    "param": null,
+    "code": "invalid_api_key"
+  }
+}
+```
+
+
+## What's next?
+
+Great, you're now set up and have made your first request to the API. Here are a few links that might be handy as you venture further into the Model Gateway:
+
+- [Configure your first gateway using *Admin Console*](/admin-console)
+- [Discover system internals](/system-internals)

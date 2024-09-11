@@ -1,0 +1,66 @@
+import Image from 'next/image';
+import { HeroPattern } from '@/components/HeroPattern'
+
+export const metadata = {
+  title: 'Model Gateway Documentation',
+  description:
+    'Learn everything there is to know about Model Gateway and integrate it into your product.',
+}
+
+
+<HeroPattern />
+
+# Model Gateway Documentation
+
+The Model Gateway serves as a centralized intermediary that manages and routes AI inference requests from client applications to various AI service providers. {{ className: 'lead' }}
+
+It enables:
+
+- **Centralized Inference Handling**: Receives and processes inference requests from client applications through a dedicated endpoint.
+- **Integration with Multiple AI Providers**: Connects to multiple AI service providers (like Azure OpenAI, OpenAI, Ollama, etc.) to fulfill the inference requests.
+- **Management and Configuration**: Provides an administrative interface (via user interface or GraphQL API) for managing configurations, monitoring, and controlling the interactions between the client applications and the AI service providers.
+
+In essence, the Model Gateway streamlines the use of multiple AI services, offering a unified interface for managing and utilizing various AI models.
+
+
+## High-level architecture
+
+<img src="/docs/img/diagram/hl-component.svg" alt="High-Level Architecture diagram" />
+
+Here’s a detailed description of each component and their interactions:
+
+- **Your AI App:**
+  - This is the client application that requires AI inference. It sends requests to the Model Gateway through an *Inference Endpoint*.
+- **Model Gateway**:
+  - This central component receives inference requests from the AI app. It acts as a proxy or intermediary between the AI app and various AI service providers.
+  - It has two main endpoints:
+    - *Inference Endpoint*: For receiving inference requests from the AI app.
+    - *Management Endpoint*: This endpoint, using GraphQL, allows for managing and configuring the model gateway.
+- **Model Gateway Admin Console**:
+  - This is the administrative UI interface used to manage the Model Gateway. It interacts with the Model Gateway through the Management Endpoint (GraphQL API). This component is optional, you can manage Model Gateway directly using Management API Endpoint.
+- **AI Service Providers**:
+  - The Model Gateway connects to various AI service providers to fulfill the inference requests. In the diagram, these providers are:
+    - Azure OpenAI
+    - OpenAI
+    - Ollama
+    - Other AI Provider
+  - Each of these providers is represented as a block connected to the Model Gateway via dashed lines, indicating the potential for multiple connections.
+
+The dashed lines represent communication paths or integration points between the Model Gateway and the AI service providers, enabling the gateway to route requests to the appropriate service based on configuration or requirements.
+
+Overall, this architecture facilitates a flexible and scalable approach to integrating various AI models and services into a single application through a centralized gateway.
+
+## Key concepts
+
+There are two main concepts to understand when working with the Model Gateway:
+- **Inference Endpoint**: This is the endpoint where Model Gateway forwards inference requests. It can be any AI service provider or app, such as OpenAI, Azure OpenAI, Ollama, and others. Each configured inference endpoint requires at least a URL (and usually also API key). You can configure multiple inference endpoints and use them in your gateways.
+- **Gateway**: A gateway is a configured endpoint in Model Gateway that connects your AI app to one or more inference endpoints. It acts as a proxy between your AI app and the inference endpoints. You can configure multiple gateways, each with its own set of inference endpoints and gateway keys. All gateways listen on the same port, but they are distinguished by the gateway key used to authenticate the request.
+- **Gateway Key**: A gateway key is an API key that you use to authenticate your requests to the gateway. Each gateway requires at least one gateway key to be configured. Gateway keys are then sent as part of the request to the gateway as HTTP Bearer token.
+
+## Use cases and scenarios
+
+- Load balancing between multiple inference endpoints and regions. For example:
+  - Azure OpenAI load balancing between multiple regions.
+  - Ollama load balancing between multiple nodes running in your cluster.
+- Automatic failover and redundancy in case of AI service outages.
+- Handling of AI service provider token and request limiting.

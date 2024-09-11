@@ -1,0 +1,24 @@
+export const metadata = {
+  title: 'Gateway API Authentication',
+  description:
+    'Learn how to authenticate with the Gateway API using API keys',
+}
+
+# Authentication
+
+The Gateway API uses generated gateway API keys for authentication. Keys can be generated using the Management API or Admin Console. To authenticate with the Gateway API, you need to include the `Authorization` header with the value `Bearer <token>` in your HTTP requests.
+
+
+```bash
+curl -v -X POST http://localhost:4001/ \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json"
+```
+
+As an alternative to using the `Authorization` header, you can also send the API key in the `api-key` header. This is to enable compatibility with Azure OpenAI.
+
+```bash
+curl -v -X POST http://localhost:4001/ \
+  -H "api-key: your-api-key" \
+  -H "Content-Type: application/json"
+```

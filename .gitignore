@@ -38,10 +38,13 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Nx
 .nx/cache
 .nx/workspace-data
 
+# local env files
 .env
+.env*.local
 
 # Next.js
 .next

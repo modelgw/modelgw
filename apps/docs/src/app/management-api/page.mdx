@@ -1,0 +1,21 @@
+export const metadata = {
+  title: 'Management API',
+  description:
+    'Manage and configure your Model Gateway using the Management API',
+}
+
+# Management API
+
+The Management API is a GraphQL API that allows you to manage and configure your Model Gateway. You can use the Management API to manage gateways, inference endpoints, and gateway keys. This guide will show you how to use the Management API to manage your Model Gateway.
+
+## Getting started
+
+To get started with the Management API, you need to have Model Gateway running on your local machine or a cloud provider. If you haven't done this yet, you can follow the [installation guide](/installation) to get Model Gateway up and running.
+
+## GraphQL Authentication 
+
+The Management API uses JWT for authentication. To authenticate with the Management API, you need to obtain a JWT token by sending a Login mutation to the Management API. More information about the authentication process can be found in the [Authentication](/management-api/authentication) section.
+
+## Reading and updating the data
+
+The Management API has a GraphQL schema that allows you to read and update the data in your Model Gateway. You can use the Management API to manage gateways, inference endpoints, and gateway keys. More information about the GraphQL schema can be found in the [GraphQL Schema](/management-api/graphql-schema) section.

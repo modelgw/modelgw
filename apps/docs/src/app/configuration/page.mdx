@@ -1,0 +1,58 @@
+export const metadata = {
+  title: 'Configuration',
+  description:
+    'In this guide, we will look at how to configure Model Gateway',
+}
+
+# Configuration
+
+In this guide, we will look at how to configure Model Gateway and Admin Console. {{ className: 'lead' }}
+
+<Note>
+If you are looking for information on how to configure your gateways, gateway API keys, and connect to your existing inference endpoints, you can find it in the [Admin Console](/admin-console) guide. If you are looking for information on how to manage and configure your Model Gateway using the Management API, you can find it in the [Management API](/management-api) guide.
+</Note>
+
+
+## Model Gateway configuration
+
+Model Gateway is configured using environment variables. The following environment variables are available to configure Model Gateway:
+
+<Properties>
+  <Property name="GATEWAY_PORT" defaultValue="4001">
+    The last ID on the page you're currently on when you want to fetch the next page.
+  </Property>
+  <Property name="ADMIN_PORT" defaultValue="4000">
+    The port exposing [Management API](/management-api). This is where you can connect with the [Admin Console](/admin-console).
+  </Property>
+  <Property name="DATABASE_URL">
+    The database connection URL.
+  </Property>
+  <Property name="PRISMA_FIELD_ENCRYPTION_KEY">
+    Encryption key used to encrypt/decrypt your API keys. Can be generated at https://cloak.47ng.com.
+  </Property>
+  <Property name="JWT_SECRET">
+    Random secret used to sign JWT.
+  </Property>
+  <Property name="ADMIN_EMAIL">
+    Email address used for logging in.
+  </Property>
+  <Property name="ADMIN_PASSWORD">
+    Password used for logging in.
+  </Property>
+  <Property name="CORS_ALLOWED_ORIGINS">
+    (Optional) Comma separated Allowed Origins on `ADMIN_PORT`. (See [CORS Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS))
+  </Property>
+</Properties>
+
+## Admin Console configuration
+
+Admin Console is configured using environment variables. Since Admin Console is using Next.js, all environment variables that are exposed to the browser are prefixed with `NEXT_PUBLIC_`. This is to prevent leaking sensitive information to the client-side code. The following environment variables are available to configure Model Gateway Admin Console:
+
+<Properties>
+  <Property name="GRAPHQL_URL">
+    URL of Model Gateway's GraphQL Management API, e.g. http://modelgw:4000/graphql
+  </Property>
+  <Property name="NEXT_PUBLIC_GATEWAY_URL">
+    URL of Model Gateway's gateway endpoint. This is also where your AI app will connect. URL can be behind some other HTTP server or firewall or in Docker network, e.g. http://modelgw:4001.
+  </Property>
+</Properties>

@@ -1,0 +1,51 @@
+export const metadata = {
+  title: 'Management API Authentication',
+  description:
+    'Learn how to authenticate with the Management API using JWT tokens',
+}
+
+## Authentication
+
+The Management API uses JWT for authentication. To authenticate with the Management API, you need to obtain a JWT token by sending a Login mutation to the Management API. You can use the following mutation to log in:
+
+<CodeGroup title="Request" tag="POST" label="http://modelgw:4000/graphql">
+```graphql {{ title: 'Mutation' }}
+mutation Mutation($input: LoginInput!) {
+  login(input: $input) {
+    token
+  }
+}
+```
+```json {{ title: 'Input' }}
+{
+  "input": {
+    "email": "admin@example.com",
+    "password": "password"
+  }
+}
+```
+```bash {{ title: 'cURL' }}
+curl --request POST \
+    --header 'content-type: application/json' \
+    --url http://localhost:4000/graphql \
+    --data '{"query":"mutation Mutation($input: LoginInput!) {\n  login(input: $input) {\n    token\n  }\n}","variables":{"input":{"email":"admin@example.com","password":"password"}}}'
+```
+</CodeGroup>
+
+You should get response that looks like this:
+
+```json
+{
+  "data": {
+    "login": {
+      "token": "..."
+    }
+  }
+}
+```
+
+Obtain token from the response and use it in the `Authorization` header to authenticate your requests to the Management API:
+
+```http {{ title: 'HTTP Authorization Header' }}
+Authorization: Bearer <token>
+```

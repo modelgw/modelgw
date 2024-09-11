@@ -1,0 +1,33 @@
+export const metadata = {
+  title: 'Monitoring',
+  description:
+    'Learn how to monitor your Model Gateway',
+}
+
+# Monitoring
+
+Model Gateway provides a monitoring endpoint that can be used to monitor the health of your Model Gateway. All actions performed by the Model Gateway are logged and can be viewed in the logs. {{ className: 'lead' }}
+
+## Health Check
+
+The monitoring endpoint is available at `/health` on Management endpoint. You can send a GET request to the monitoring endpoint to check the health of your Model Gateway. It returns HTTP status code `200` if everything is working, `503` otherwise. Response body contains JSON with detail information.
+
+
+<CodeGroup title="Response" tag="GET" label="http://modelgw:4000/health">
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "dataSource": true
+}
+```
+</CodeGroup>
+
+## Logs
+
+Model Gateway logs all actions performed by the Model Gateway. All logs are written to the standard output. If you are running Model Gateway in a Docker container, you can view the logs by running the following command:
+
+```bash
+docker logs modelgw
+```

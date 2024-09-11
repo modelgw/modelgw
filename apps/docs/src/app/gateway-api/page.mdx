@@ -1,0 +1,23 @@
+export const metadata = {
+  title: 'Gateway API Introduction',
+  description:
+    'Perform inference using the Gateway API',
+}
+
+# Introduction
+
+The Gateway API allows you to perform inference on your AI services. You can send a POST request to the Gateway API with the input data and receive the output data in the response. Gateway will forward the request to the appropriate inference endpoint and return the response to you. That mean gateway accepts the same input and output format as the inference endpoint with the small difference described below.
+
+## Azure OpenAI platform
+
+Azure OpenAI [requires](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2024-02-01/inference.yaml) sending *deployment-id* in the request URL. Older versions of Azure OpenAI API require also *model* in the request body. You should change those to `auto` in the request to the Gateway API. Gateway will automatically forward the request with the correct deployment id and model to the Azure OpenAI platform.
+
+
+<CodeGroup tag="POST" label="http://modelgw:4001/openai/deployments/auto/chat/completions">
+```json
+{
+  "messages": ...,
+  "model": "auto"
+}
+```
+</CodeGroup>

@@ -1,0 +1,68 @@
+import Image from 'next/image';
+import azureKeysAndEndpoints from './azure-keys-and-endpoints.png';
+import azureOpenAIDeployments from './azure-openai-deployments.png';
+
+export const metadata = {
+  title: 'Azure OpenAI Load Balancing',
+  description:
+    'Learn how to use Model Gateway with Azure OpenAI load balancing and failover across multiple regions',
+}
+
+# Azure OpenAI Load Balancing
+
+Model Gateway can be used with Azure OpenAI to provide load balancing and failover across multiple regions. This guide will show you how to set up Model Gateway with Azure OpenAI. {{ className: 'lead' }}
+
+Here is a schema of a typical load balancing setup with Azure OpenAI and Model Gateway:
+<img src="/docs/img/diagram/azure-openai-load-balancing.svg" alt="Azure OpenAI Load Balancing" />
+
+## Load balancing and failover
+
+Model Gateway will automatically load balance requests across all enabled Inference Endpoints (called model deployments in Azure OpenAI). If one of the Inference Endpoints becomes unavailable (due to server error or limit exceeded), Model Gateway will automatically switch to the next available Inference Endpoint. If all Inference Endpoints are unavailable, Model Gateway will return an error to the client.
+
+Inference Endpoint that became unavailable will be marked with a state *Throttling* or *Error* in the Admin Console. If all selected Inference Endpoints are in *Throttling* or *Error* state, also the Gateway will be marked as *Throttling* or *Error*. 
+
+## Routing to the fastest region
+
+Model Gateway allows also dynamic load balancing to the fastest available Azure OpenAI region. To enable this feature, please <a href="/#contact">contact us</a>.
+
+## Prerequisites for configuring Azure OpenAI load balancer
+
+- Model Gateway and Admin Console are up and running.
+- You have provisioned Azure OpenAI resources in multiple regions.
+- You have created a *Deployment* with the same model and version in each region. Do not use the *Auto-update to default* version option. Choose the exact version.
+
+<Image src={azureOpenAIDeployments} alt="Azure OpenAI Deployments" />
+
+## Automatic configuration of Azure OpenAI load balancer
+
+Model Gateway can automatically import your Azure OpenAI resources and make them available to be enabled in the Gateway. Model Gateway uses `@azure/identity` library for retrieving Azure credentials and obtaining the access token for Azure. The most common scenarios for providing credentials for Model Gateway are:
+* [enable Managed Identity](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview) on Model Gateway if you run in on Azure VM, App Service or similar
+* [using environment variables](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/identity/identity/README.md#environment-variables) otherwise
+
+Always make sure that the used identity has access to the Azure OpenAI resources you want to import. Model Gateway uses Azure REST API to retrieve the list of your Azure OpenAI resources and their keys. We recommend creating a custom role on your *Subscription* with these permissions:
+- `Microsoft.CognitiveServices/accounts/listKeys/action`
+- `Microsoft.ApiManagement/service/subscriptions/read`
+- `Microsoft.Resources/subscriptions/resourceGroups/read`
+- `Microsoft.CognitiveServices/accounts/read`
+- `Microsoft.CognitiveServices/accounts/deployments/read`
+
+Once you create a custom role, assign it to a new *Managed Identity*. Then assign this identity to your VM, App Service, or other resources where Model Gateway is running. Model Gateway will automatically use the Managed Identity to authenticate with Azure.
+
+To import Azure OpenAI resources to Model Gateway, follow these steps:
+
+1. Open the Model Gateway Admin Console and navigate to the *Inference Endpoints* page and click the *Import* button.
+1. Select all Azure OpenAI model deployments you want to import and click *Import*. Importing may take a bit longer depending on the number of resources in your Azure subscriptions.
+1. Navigate to the *Gateways* page and create a new Gateway. Enable each Inference Endpoint you created in the previous step.
+1. Test the Gateway by sending a request to the Gateway URL.
+
+
+## Manual configuration of Azure OpenAI load balancer
+
+To configure Model Gateway manually, you need to obtain API keys and endpoints for each Azure OpenAI resource.
+<Image src={azureKeysAndEndpoints} alt="Azure OpenAI Keys and Endpoints" />
+
+
+1. Open the Model Gateway Admin Console and navigate to the *Inference Endpoints* page.
+1. Create a new Inference Endpoint for each Azure OpenAI resource. Configure the endpoint with the Azure OpenAI API key, endpoint, model name, and version.
+1. Navigate to the *Gateways* page and create a new Gateway. Enable each Inference Endpoint you created in the previous step.
+1. Test the Gateway by sending a request to the Gateway URL.

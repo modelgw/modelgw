@@ -1,0 +1,34 @@
+export const metadata = {
+  title: 'System Internals',
+  description:
+    'In this guide, we will look at the internals of Model Gateway',
+}
+
+# System Internals
+
+This guide will look at the internals of Model Gateway. We'll cover the database schema and technologies used. {{ className: 'lead' }}
+
+## Database schema
+
+Model Gateway uses a PostgreSQL database to store its data. The database schema is managed by Prisma, which is an ORM that provides a type-safe way to interact with the database. The schema is defined in the `schema.prisma` file in the Model Gateway repository.
+
+The primary entities are:
+- **Inference Enpoint** - Represents an endpoint where you can send AI inference requests.
+- **Gateway** - Represents a gateway that your apps connect to. Gateway validates your request and forward it to specified inference endpoint. Gateways can have multiple inference endpoints.
+- **Gateway Key** - Represents an API key that you use to authenticate your requests to the gateway.
+
+Here is a simplified high-level database schema:
+<img src="/docs/img/diagram/hl-database.svg" alt="High-Level Database Schema" />
+
+## Technologies used
+
+Model Gateway is built using the following technologies:
+- **PostgreSQL** - Database to store data.
+- **Prisma** - ORM for database access.
+- **TypeScript** - Programming language.
+- **GraphQL** - Query language for management APIs.
+- **Next.js** - React framework for the admin interface.
+- **Tailwind CSS** - CSS framework.
+- **Express** - Web framework for the gateway server.
+- **Docker** - Containerization platform.
+
