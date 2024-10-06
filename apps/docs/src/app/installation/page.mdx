@@ -64,8 +64,6 @@ After running the above commands, you can access the Model Gateway Admin Console
 You can also use Docker Compose to start the Model Gateway and the Admin Console. Create a `docker-compose.yml` file with the following content:
 
 ```yaml
-version: '3.8'
-
 services:
   postgresql:
     image: postgres:16
@@ -85,6 +83,7 @@ services:
 
   modelgw:
     image: modelgw/modelgw:latest
+    platform: linux/amd64
     container_name: modelgw
     environment:
       DATABASE_URL: "postgresql://modelgw:modelgw@postgresql:5432/modelgw?schema=public"
@@ -101,7 +100,8 @@ services:
         condition: service_healthy
 
   modelgw-admin:
-    image: modelgw/modelgw-admin:latest
+    image: modelgw/admin:latest
+    platform: linux/amd64
     container_name: modelgw-admin
     environment:
       GRAPHQL_URL: http://modelgw:4000/graphql
