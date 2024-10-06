@@ -30,7 +30,7 @@
         "ci-docs": {
           "push": true,
           "tags": [
-            "modelgw/docs:latest",
+            "type=raw,value=latest",
             "type=sha"
           ]
         }
