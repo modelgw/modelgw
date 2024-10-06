@@ -26,6 +26,20 @@
       "configurations": {
         "ci": {
           "push": true
+        },
+        "ci-docs": {
+          "push": true,
+          "metadata": {
+            "images": [
+              "modelgw/docs"
+            ],
+            "tags": [
+              "type=sha"
+            ],
+            "flavor": [
+              "latest=true"
+            ]
+          }
         }
       }
     }
