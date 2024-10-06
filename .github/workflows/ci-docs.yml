@@ -1,4 +1,4 @@
-name: Release
+name: Docs Release
 
 on:
   push:
@@ -41,6 +41,6 @@ jobs:
         run: npm install
 
       - name: Build and push images
-        run: npx nx run-many --target=container --projects=docs --parallel=2 --configuration=ci
+        run: npx nx run-many --target=container --projects=docs --parallel=2 --configuration=ci-docs
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

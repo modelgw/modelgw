@@ -26,6 +26,13 @@
       "configurations": {
         "ci": {
           "push": true
+        },
+        "ci-docs": {
+          "push": true,
+          "tags": [
+            "modelgw/docs:latest",
+            "type=sha"
+          ]
         }
       }
     }
