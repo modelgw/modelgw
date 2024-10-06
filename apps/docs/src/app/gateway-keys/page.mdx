@@ -1,0 +1,18 @@
+
+export const metadata = {
+  title: 'Gateway Keys',
+  description:
+    'Learn how to manage and configure Gateway Keys in Model Gateway.',
+}
+
+# Gateway Keys
+
+Gateway keys are used to authenticate requests to the Model Gateway. Each gateway requires at least one gateway key to be configured. Gateway keys are then sent as part of the request to the gateway as an HTTP Bearer token. Keys can be configured with a usage limit and in a hierarchical structure. {{ className: 'lead' }}
+
+## Usage limits
+
+Gateway keys can be configured with a usage limit. This limit specifies the maximum number of prompt and completion tokens per hour or per day. Once the limit is reached, the gateway will return a `429 Too Many Requests` error. You can configure the usage limit when creating a gateway key. Number of used tokens is taken from the response of the AI service provider, if available.
+
+## Keys hierarchy
+
+Gateway keys can be configured in a hierarchical structure. This allows you to create keys with different usage limits. For example, you can create a parent key with a high usage limit and multiple child keys with lower usage limits. Another use case is to create a parent key with a usage limit and multiple child keys with no usage limit. The child keys inherit the usage limit of all parent keys in the hierarchy. This way, you can manage the usage limits of multiple keys more efficiently.

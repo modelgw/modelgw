@@ -55,7 +55,7 @@ Overall, this architecture facilitates a flexible and scalable approach to integ
 There are two main concepts to understand when working with the Model Gateway:
 - **Inference Endpoint**: This is the endpoint where Model Gateway forwards inference requests. It can be any AI service provider or app, such as OpenAI, Azure OpenAI, Ollama, and others. Each configured inference endpoint requires at least a URL (and usually also API key). You can configure multiple inference endpoints and use them in your gateways.
 - **Gateway**: A gateway is a configured endpoint in Model Gateway that connects your AI app to one or more inference endpoints. It acts as a proxy between your AI app and the inference endpoints. You can configure multiple gateways, each with its own set of inference endpoints and gateway keys. All gateways listen on the same port, but they are distinguished by the gateway key used to authenticate the request.
-- **Gateway Key**: A gateway key is an API key that you use to authenticate your requests to the gateway. Each gateway requires at least one gateway key to be configured. Gateway keys are then sent as part of the request to the gateway as HTTP Bearer token.
+- **Gateway Key**: A gateway key is an API key that you use to authenticate your requests to the gateway. Each gateway requires at least one gateway key to be configured. Gateway keys are then sent as part of the request to the gateway as HTTP Bearer token. Keys can be configured with a usage limit and in a hierarchical structure. <Button href="/gateway-keys" variant="text" arrow="right"> Read more </Button>
 
 ## Use cases and scenarios
 

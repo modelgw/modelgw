@@ -261,6 +261,7 @@ export const navigation: Array<NavGroup> = [
     links: [
       { title: 'Introduction', href: '/gateway-api' },
       { title: 'Authentication', href: '/gateway-api/authentication' },
+      { title: 'Gateway Keys', href: '/gateway-keys' },
     ],
   },
 ]
