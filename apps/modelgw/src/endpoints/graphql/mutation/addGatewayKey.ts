@@ -18,6 +18,10 @@ export const addGatewayKeyTypeDefs = gql`
   input AddGatewayKeyInput {
     gatewayId: ID!
     name: String!
+    promptTokensLimit: Int
+    completionTokensLimit: Int
+    resetFrequency: String
+    parentGatewayKeyId: ID
   }
 
   type AddGatewayKeyPayload {
@@ -29,6 +33,19 @@ export const addGatewayKeyTypeDefs = gql`
 export const AddGatewayKeyInputSchema = z.object({
   name: GatewayKeyValidations.name,
   gatewayId: GatewayValidations.gatewayId,
+  promptTokensLimit: GatewayKeyValidations.promptTokensLimit,
+  completionTokensLimit: GatewayKeyValidations.completionTokensLimit,
+  resetFrequency: GatewayKeyValidations.resetFrequency,
+  parentGatewayKeyId: GatewayKeyValidations.parentGatewayKeyId,
+}).superRefine(async (val, ctx) => {
+  if ((val.promptTokensLimit || val.completionTokensLimit) && !val.resetFrequency) {
+    ctx.addIssue({
+      path: ['resetFrequency'],
+      code: z.ZodIssueCode.custom,
+      message: 'Reset frequency is required',
+    });
+    return z.INVALID;
+  }
 });
 
 async function generateKey(prismaClient: PrismaClient) {
@@ -56,6 +73,10 @@ const resolve = async (
       name: values.name,
       keyHash,
       maskedKey,
+      promptTokensLimit: values.promptTokensLimit,
+      completionTokensLimit: values.completionTokensLimit,
+      resetFrequency: values.resetFrequency,
+      parentId: values.parentGatewayKeyId ? decodeGlobalIdStr(values.parentGatewayKeyId).id : null,
       gatewayId: decodeGlobalIdStr(values.gatewayId).id,
       status: GatewayKeyConst.Status.Active,
     },

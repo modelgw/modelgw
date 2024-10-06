@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { Gateway, GatewayRequest, InferenceEndpoint, InferenceEndpointRequest } from '@prisma/client';
+import { Gateway, GatewayKey, GatewayRequest, InferenceEndpoint, InferenceEndpointRequest } from '@prisma/client';
 import axios, { AxiosError } from 'axios';
 import { createHash } from "crypto";
 import { Request, RequestHandler, Response } from 'express';
@@ -8,9 +8,9 @@ import pino from 'pino';
 import { PrismaClient } from '../../lib/db/client';
 import { GatewayKeyConst, InferenceEndpointConst } from '../../lib/db/const';
 import { logger as mainLogger } from "../../lib/logger";
-import { GatewayExhaustedResponse, GatewayExhaustedResponseStatus, OpenAIUnauthorizedResponse, OpenAIUnauthorizedResponseStatus } from './response';
+import { GatewayExhaustedResponse, GatewayExhaustedResponseStatus, OpenAIUnauthorizedResponse, OpenAIUnauthorizedResponseStatus, TokensLimitReachedResponse, TokensLimitReachedResponseStatus } from './response';
 import { StreamCollectTransform } from './StreamCollectTransform';
-import { createHeadersFromRequest, resetThrottlingEndpoints, setEndpointStatus, shuffleArray } from './utils';
+import { createHeadersFromRequest, incrementTokensUsageRecursively, resetThrottlingEndpoints, setEndpointStatus, shuffleArray, tokensUsageLimitsReached } from './utils';
 
 export type GatewayResult = {
   dataSource: boolean;
@@ -22,6 +22,7 @@ export type CreateGatewayHandlerOptions = {
 
 export const createGatewayHandler = ({ prismaClient }: CreateGatewayHandlerOptions): RequestHandler => {
   return async (req: Request, res: Response) => {
+    const startTime = performance.now();
     const clientIp = req.clientIp;
     const requestId = createId();
     const logger = mainLogger.child({ clientIp, requestId });
@@ -92,11 +93,45 @@ export const createGatewayHandler = ({ prismaClient }: CreateGatewayHandlerOptio
       });
     }
 
+
+    const limitReached = await tokensUsageLimitsReached(prismaClient, gatewayKey.id)
+    if (limitReached) {
+      logger.info({ gatewayKey: { id: gatewayKey.id }, reason: limitReached }, 'Gateway key tokens usage limits reached');
+
+      if (gateway.logTraffic) {
+        logger.info({
+          gateway: { id: gateway.id },
+          url: req.url,
+          method: req.method,
+          headers: {
+            ...req.headers,
+            authorization: req.headers['authorization'] ? '[REDACTED]' : undefined,
+            'api-key': req.headers['api-key'] ? '[REDACTED]' : undefined,
+          },
+          body: gateway.logPayload ? req.body : undefined,
+        }, 'Gateway request received');
+      }
+
+      if (gateway.traceTraffic) {
+        await prismaClient.gatewayResponse.create({
+          data: {
+            duration: (performance.now() - startTime) / 1000,
+            statusCode: TokensLimitReachedResponseStatus,
+            headers: {},
+            body: gateway.tracePayload ? JSON.stringify(TokensLimitReachedResponse) : undefined,
+            gatewayRequestId: gatewayRequest!.id,
+          }
+        });
+      }
+
+      return res.status(TokensLimitReachedResponseStatus).json(TokensLimitReachedResponse);
+    }
+
     const inferenceEndpoints = gateway.inferenceEndpoints.map(value => value.inferenceEndpoint);
     shuffleArray(inferenceEndpoints);
 
     for (const endpoint of inferenceEndpoints) {
-      const processed = await requestEndpoint({ prismaClient, req, res, gatewayRequest, gateway, endpoint, logger });
+      const processed = await requestEndpoint({ prismaClient, req, res, gatewayRequest, gateway, gatewayKey, endpoint, logger });
       if (processed) return;
     }
     res.status(GatewayExhaustedResponseStatus).json(GatewayExhaustedResponse);
@@ -109,10 +144,11 @@ type RequestAzureOpenAIOptions = {
   res: Response;
   gatewayRequest?: GatewayRequest;
   gateway: Gateway;
+  gatewayKey: GatewayKey;
   endpoint: InferenceEndpoint;
   logger: pino.Logger;
 };
-export async function requestEndpoint({ req, res, gatewayRequest, gateway, endpoint, prismaClient, logger: mainLogger }: RequestAzureOpenAIOptions) {
+export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatewayKey, endpoint, prismaClient, logger: mainLogger }: RequestAzureOpenAIOptions) {
   const logger = mainLogger.child({ inferenceEndpoint: { id: endpoint.id } });
   const headers = createHeadersFromRequest(req);
   const body = req.is('json') ? { ...req.body } : req.body; //shallow copy
@@ -202,6 +238,18 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, endpo
 
   const transform = new StreamCollectTransform();
   transform.on('close', async () => {
+    const jsonBody = (function (raw) {
+      try {
+        return JSON.parse(raw);
+      } catch (err) {
+        return undefined;
+      }
+    })(transform.content);
+
+    if (jsonBody?.usage?.prompt_tokens || jsonBody?.usage?.completion_tokens) {
+      await incrementTokensUsageRecursively(prismaClient, gatewayKey.id, jsonBody.usage.prompt_tokens, jsonBody.usage.completion_tokens);
+    }
+
     if (gateway.logTraffic) {
       logger.info({
         statusCode: fetchResponse.status,
@@ -212,13 +260,6 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, endpo
       }, 'Inference endpoint request completed');
     }
     if (gateway.traceTraffic && gatewayRequest && inferenceEndpointRequest) {
-      const jsonBody = (function (raw) {
-        try {
-          return JSON.parse(raw);
-        } catch (err) {
-          return undefined;
-        }
-      })(transform.content);
       const inferenceEndpointResponse = await prismaClient.inferenceEndpointResponse.create({
         data: {
           statusCode: fetchResponse.status,

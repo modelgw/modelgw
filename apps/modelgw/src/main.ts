@@ -37,6 +37,7 @@ import { createGatewayServer } from './endpoints/gateway/gateway-server';
 import { createGraphqlServerMiddlewareAsync, graphqlServer } from './endpoints/graphql/graphql-server';
 import { createHealthcheckHandler } from './endpoints/health';
 import { prismaClient } from './lib/db/client';
+import './lib/scheduler';
 
 const ADMIN_PORT = parseInt(process.env.ADMIN_PORT ?? '4000');
 const GATEWAY_PORT = parseInt(process.env.GATEWAY_PORT ?? '4001');

@@ -16,6 +16,10 @@ export const GatewayKeyConst = {
     Active: 'ACTIVE' as const,
     Revoked: 'REVOKED' as const,
   },
+  ResetFrequency: {
+    Daily: 'DAILY' as const,
+    Hourly: 'HOURLY' as const,
+  },
 }
 
 // Inference Endpoint

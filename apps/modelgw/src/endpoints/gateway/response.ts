@@ -28,3 +28,14 @@ export const GatewayExhaustedResponse = {
   }
 };
 export const GatewayExhaustedResponseStatus = 503;
+
+
+export const TokensLimitReachedResponse = {
+  error: {
+    message: 'Tokens limit reached',
+    type: 'tokens_limit_reached_error',
+    param: null,
+    code: 'tokens_limit_reached_error',
+  }
+};
+export const TokensLimitReachedResponseStatus = 429;

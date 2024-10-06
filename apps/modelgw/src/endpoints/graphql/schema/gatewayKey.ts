@@ -15,9 +15,15 @@ export const gatewayKeyTypeDefs = gql`
   type GatewayKey implements Node {
     id: ID!
     name: String!
-    status: String!
     maskedKey: String!
-
+    status: String!
+    promptTokens: Int!
+    completionTokens: Int!
+    promptTokensLimit: Int
+    completionTokensLimit: Int
+    resetFrequency: String
+    lastResetAt: String
+    parent: GatewayKey
     createdAt: String!
     updatedAt: String!
   }
@@ -36,6 +42,10 @@ export const gatewayKeyTypeDefs = gql`
 export const GatewayKeyValidations = {
   gatewayKeyId: zId(),
   name: z.string().min(1, 'Name is required').max(64, 'Name is too long'),
+  promptTokensLimit: z.number().int().positive().nullish(),
+  completionTokensLimit: z.number().int().positive().nullish(),
+  resetFrequency: z.enum([GatewayKeyConst.ResetFrequency.Daily, GatewayKeyConst.ResetFrequency.Hourly]).nullish(),
+  parentGatewayKeyId: zId().nullish(),
 };
 
 
@@ -48,6 +58,9 @@ export const gatewayKeyResolvers = {
           where: {
             gatewayId: parent.id,
             status: GatewayKeyConst.Status.Active,
+          },
+          include: {
+            parent: true,
           },
           orderBy: { name: 'asc' },
         }),

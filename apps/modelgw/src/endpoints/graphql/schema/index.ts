@@ -8,6 +8,7 @@ import { createInferenceEndpointResolvers, createInferenceEndpointTypeDefs } fro
 import { importAzureModelDeploymentsResolvers, importAzureModelDeploymentsTypeDefs } from '../mutation/importAzureModelDeployments';
 import { loginResolvers, loginTypeDefs } from '../mutation/login';
 import { logoutResolvers, logoutTypeDefs } from '../mutation/logout';
+import { resetGatewayKeyUsageResolvers, resetGatewayKeyUsageTypeDefs } from '../mutation/resetGatewayKeyUsage';
 import { revokeGatewayKeyResolvers, revokeGatewayKeyTypeDefs } from '../mutation/revokeGatewayKey';
 import { updateGatewayResolvers, updateGatewayTypeDefs } from '../mutation/updateGateway';
 import { updateInferenceEndpointResolvers, updateInferenceEndpointTypeDefs } from '../mutation/updateInferenceEndpoint';
@@ -38,6 +39,7 @@ const typeDefs = mergeTypeDefs([
   importAzureModelDeploymentsTypeDefs,
   loginTypeDefs,
   logoutTypeDefs,
+  resetGatewayKeyUsageTypeDefs,
   revokeGatewayKeyTypeDefs,
   updateGatewayTypeDefs,
   updateInferenceEndpointTypeDefs,
@@ -59,6 +61,7 @@ const resolvers = mergeResolvers([
   importAzureModelDeploymentsResolvers,
   loginResolvers,
   logoutResolvers,
+  resetGatewayKeyUsageResolvers,
   revokeGatewayKeyResolvers,
   updateGatewayResolvers,
   updateInferenceEndpointResolvers,

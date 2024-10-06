@@ -30,6 +30,7 @@ export const permissions = shield({
     updateGateway: isAuthenticated,
     // Gateway Key
     addGatewayKey: isAuthenticated,
+    resetGatewayKeyUsage: isAuthenticated,
     revokeGatewayKey: isAuthenticated,
     // Infernce Endpoint
     createInferenceEndpoint: isAuthenticated,

@@ -18,8 +18,12 @@ export type Scalars = {
 };
 
 export type AddGatewayKeyInput = {
+  completionTokensLimit?: InputMaybe<Scalars['Int']['input']>;
   gatewayId: Scalars['ID']['input'];
   name: Scalars['String']['input'];
+  parentGatewayKeyId?: InputMaybe<Scalars['ID']['input']>;
+  promptTokensLimit?: InputMaybe<Scalars['Int']['input']>;
+  resetFrequency?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AddGatewayKeyPayload = {
@@ -131,10 +135,17 @@ export type GatewayInferenceEndpointEdge = {
 
 export type GatewayKey = Node & {
   __typename?: 'GatewayKey';
+  completionTokens: Scalars['Int']['output'];
+  completionTokensLimit?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  lastResetAt?: Maybe<Scalars['String']['output']>;
   maskedKey: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  parent?: Maybe<GatewayKey>;
+  promptTokens: Scalars['Int']['output'];
+  promptTokensLimit?: Maybe<Scalars['Int']['output']>;
+  resetFrequency?: Maybe<Scalars['String']['output']>;
   status: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
 };
@@ -286,6 +297,7 @@ export type Mutation = {
   importAzureModelDeployments?: Maybe<ImportAzureModelDeploymentsPayload>;
   login?: Maybe<LoginPayload>;
   logout?: Maybe<Scalars['Boolean']['output']>;
+  resetGatewayKeyUsage?: Maybe<ResetGatewayKeyUsagePayload>;
   revokeGatewayKey?: Maybe<RevokeGatewayKeyPayload>;
   updateGateway?: Maybe<UpdateGatewayPayload>;
   updateInferenceEndpoint?: Maybe<UpdateInferenceEndpointPayload>;
@@ -314,6 +326,11 @@ export type MutationimportAzureModelDeploymentsArgs = {
 
 export type MutationloginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationresetGatewayKeyUsageArgs = {
+  input: ResetGatewayKeyUsageInput;
 };
 
 
@@ -383,13 +400,22 @@ export type QuerynodeArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type ResetGatewayKeyUsageInput = {
+  gatewayKeyId: Scalars['ID']['input'];
+};
+
+export type ResetGatewayKeyUsagePayload = {
+  __typename?: 'ResetGatewayKeyUsagePayload';
+  gatewayKey?: Maybe<GatewayKey>;
+};
+
 export type RevokeGatewayKeyInput = {
   gatewayKeyId: Scalars['ID']['input'];
 };
 
 export type RevokeGatewayKeyPayload = {
   __typename?: 'RevokeGatewayKeyPayload';
-  gatewayKey?: Maybe<GatewayKey>;
+  gatewayKeys: Array<GatewayKey>;
 };
 
 export type UpdateGatewayInput = {
@@ -545,6 +571,8 @@ export type ResolversTypes = {
   Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Node']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
+  ResetGatewayKeyUsageInput: ResetGatewayKeyUsageInput;
+  ResetGatewayKeyUsagePayload: ResolverTypeWrapper<ResetGatewayKeyUsagePayload>;
   RevokeGatewayKeyInput: RevokeGatewayKeyInput;
   RevokeGatewayKeyPayload: ResolverTypeWrapper<RevokeGatewayKeyPayload>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -597,6 +625,8 @@ export type ResolversParentTypes = {
   Node: ResolversInterfaceTypes<ResolversParentTypes>['Node'];
   PageInfo: PageInfo;
   Query: {};
+  ResetGatewayKeyUsageInput: ResetGatewayKeyUsageInput;
+  ResetGatewayKeyUsagePayload: ResetGatewayKeyUsagePayload;
   RevokeGatewayKeyInput: RevokeGatewayKeyInput;
   RevokeGatewayKeyPayload: RevokeGatewayKeyPayload;
   String: Scalars['String']['output'];
@@ -679,10 +709,17 @@ export type GatewayInferenceEndpointEdgeResolvers<ContextType = any, ParentType 
 };
 
 export type GatewayKeyResolvers<ContextType = any, ParentType extends ResolversParentTypes['GatewayKey'] = ResolversParentTypes['GatewayKey']> = {
+  completionTokens?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  completionTokensLimit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastResetAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   maskedKey?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parent?: Resolver<Maybe<ResolversTypes['GatewayKey']>, ParentType, ContextType>;
+  promptTokens?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  promptTokensLimit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  resetFrequency?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -819,6 +856,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   importAzureModelDeployments?: Resolver<Maybe<ResolversTypes['ImportAzureModelDeploymentsPayload']>, ParentType, ContextType, RequireFields<MutationimportAzureModelDeploymentsArgs, 'input'>>;
   login?: Resolver<Maybe<ResolversTypes['LoginPayload']>, ParentType, ContextType, RequireFields<MutationloginArgs, 'input'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  resetGatewayKeyUsage?: Resolver<Maybe<ResolversTypes['ResetGatewayKeyUsagePayload']>, ParentType, ContextType, RequireFields<MutationresetGatewayKeyUsageArgs, 'input'>>;
   revokeGatewayKey?: Resolver<Maybe<ResolversTypes['RevokeGatewayKeyPayload']>, ParentType, ContextType, RequireFields<MutationrevokeGatewayKeyArgs, 'input'>>;
   updateGateway?: Resolver<Maybe<ResolversTypes['UpdateGatewayPayload']>, ParentType, ContextType, RequireFields<MutationupdateGatewayArgs, 'input'>>;
   updateInferenceEndpoint?: Resolver<Maybe<ResolversTypes['UpdateInferenceEndpointPayload']>, ParentType, ContextType, RequireFields<MutationupdateInferenceEndpointArgs, 'input'>>;
@@ -846,8 +884,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   viewer?: Resolver<Maybe<ResolversTypes['Viewer']>, ParentType, ContextType>;
 };
 
-export type RevokeGatewayKeyPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['RevokeGatewayKeyPayload'] = ResolversParentTypes['RevokeGatewayKeyPayload']> = {
+export type ResetGatewayKeyUsagePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResetGatewayKeyUsagePayload'] = ResolversParentTypes['ResetGatewayKeyUsagePayload']> = {
   gatewayKey?: Resolver<Maybe<ResolversTypes['GatewayKey']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RevokeGatewayKeyPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['RevokeGatewayKeyPayload'] = ResolversParentTypes['RevokeGatewayKeyPayload']> = {
+  gatewayKeys?: Resolver<Array<ResolversTypes['GatewayKey']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -896,6 +939,7 @@ export type Resolvers<ContextType = any> = {
   Node?: NodeResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  ResetGatewayKeyUsagePayload?: ResetGatewayKeyUsagePayloadResolvers<ContextType>;
   RevokeGatewayKeyPayload?: RevokeGatewayKeyPayloadResolvers<ContextType>;
   UpdateGatewayPayload?: UpdateGatewayPayloadResolvers<ContextType>;
   UpdateInferenceEndpointPayload?: UpdateInferenceEndpointPayloadResolvers<ContextType>;

@@ -66,23 +66,48 @@ model Gateway {
 }
 
 model GatewayKey {
-  id        String @id @default(cuid())
-  name      String
-  keyHash   String @unique @map("key_hash")
-  maskedKey String @map("masked_key")
-  status    String
+  id                    String   @id @default(cuid())
+  name                  String
+  keyHash               String   @unique @map("key_hash")
+  maskedKey             String   @map("masked_key")
+  status                String
+  promptTokens          Int      @default(0) @map("prompt_tokens")
+  completionTokens      Int      @default(0) @map("completion_tokens")
+  promptTokensLimit     Int?     @map("prompt_tokens_limit")
+  completionTokensLimit Int?     @map("completion_tokens_limit")
+  resetFrequency        String?  @map("reset_frequency")
+  lastResetAt           DateTime @default(now()) @map("last_reset_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  gateway         Gateway          @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
-  gatewayId       String           @map("gateway_id")
-  gatewayRequests GatewayRequest[]
+  parent   GatewayKey?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: SetNull)
+  parentId String?      @map("parent_id")
+  children GatewayKey[] @relation("ParentChild")
+
+  gateway                Gateway                  @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  gatewayId              String                   @map("gateway_id")
+  gatewayRequests        GatewayRequest[]
+  gatewayKeyUsageHistory GatewayKeyUsageHistory[]
 
   @@index([keyHash])
   @@index([status])
   @@index([gatewayId])
   @@map("gateway_keys")
+}
+
+model GatewayKeyUsageHistory {
+  id               Int      @id @default(autoincrement())
+  gatewayKeyId     String   @map("gateway_key_id")
+  date             DateTime
+  promptTokens     Int      @map("prompt_tokens")
+  completionTokens Int      @map("completion_tokens")
+
+  gatewayKey GatewayKey @relation(fields: [gatewayKeyId], references: [id], onDelete: Cascade)
+
+  @@index([gatewayKeyId])
+  @@index([date])
+  @@map("gateway_key_usage_history")
 }
 
 model GatewayRequest {

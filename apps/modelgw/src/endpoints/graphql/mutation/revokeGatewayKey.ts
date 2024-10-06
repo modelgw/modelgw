@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { z } from 'zod';
-import { GatewayKeyConst } from '../../../lib/db/const';
+import { revokeGatewayKeyRecursively } from '../../gateway/utils';
 import { GatewayKeyValidations } from '../schema/gatewayKey';
 import { RevokeGatewayKeyInput } from '../schema/generated/types';
 import { ServerContext } from '../server-context';
@@ -16,7 +16,7 @@ export const revokeGatewayKeyTypeDefs = gql`
   }
 
   type RevokeGatewayKeyPayload {
-    gatewayKey: GatewayKey
+    gatewayKeys: [GatewayKey!]!
   }
 `;
 
@@ -30,16 +30,8 @@ const resolve = async (
   { logger, prismaClient }: ServerContext,
 ) => { //: Promise<RevokeGatewayKeyPayload> => {
   const values = await RevokeGatewayKeyInputSchema.parseAsync(input);
-  logger.info({ input }, 'Revoking gateway key');
-  const gatewayKey = await prismaClient.gatewayKey.update({
-    where: {
-      id: decodeGlobalIdStr(values.gatewayKeyId).id,
-    },
-    data: {
-      status: GatewayKeyConst.Status.Revoked,
-    },
-  });
-  return { gatewayKey };
+  const revokedKeys = await revokeGatewayKeyRecursively(prismaClient, decodeGlobalIdStr(values.gatewayKeyId).id);
+  return { gatewayKeys: revokedKeys };
 };
 
 export const revokeGatewayKeyResolvers = {

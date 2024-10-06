@@ -53,7 +53,7 @@ export const inferenceEndpointTypeDefs = gql`
 `;
 
 export function zInferenceEndpointName() {
-  return zKebabCaseString(z.string().min(1, 'Name is required').max(64, 'Name is too long'));
+  return zKebabCaseString(z.string().trim().min(1, 'Name is required').max(64, 'Name is too long'));
 }
 
 export const InferenceEndpointValidations = {

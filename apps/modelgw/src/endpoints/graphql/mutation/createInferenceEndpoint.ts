@@ -39,8 +39,6 @@ const resolve = async (_args: any, { input }: { input: CreateInferenceEndpointIn
   const values = await CreateInferenceEndpointInputSchema.parseAsync(input);
   logger.info({ ...values, key: 'REDACTED' }, 'Creating inference endpoint');
   const inferenceEndpoint = await prismaClient.inferenceEndpoint.create({
-    // TODO: fix types check
-    // @ts-expect-error Property 'name' is optional
     data: {
       ...values,
       status: InferenceEndpointConst.Status.Active,

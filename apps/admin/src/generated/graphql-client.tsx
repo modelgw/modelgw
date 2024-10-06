@@ -19,8 +19,12 @@ export type Scalars = {
 };
 
 export type AddGatewayKeyInput = {
+  completionTokensLimit?: InputMaybe<Scalars['Int']['input']>;
   gatewayId: Scalars['ID']['input'];
   name: Scalars['String']['input'];
+  parentGatewayKeyId?: InputMaybe<Scalars['ID']['input']>;
+  promptTokensLimit?: InputMaybe<Scalars['Int']['input']>;
+  resetFrequency?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AddGatewayKeyPayload = {
@@ -132,10 +136,17 @@ export type GatewayInferenceEndpointEdge = {
 
 export type GatewayKey = Node & {
   __typename?: 'GatewayKey';
+  completionTokens: Scalars['Int']['output'];
+  completionTokensLimit?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  lastResetAt?: Maybe<Scalars['String']['output']>;
   maskedKey: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  parent?: Maybe<GatewayKey>;
+  promptTokens: Scalars['Int']['output'];
+  promptTokensLimit?: Maybe<Scalars['Int']['output']>;
+  resetFrequency?: Maybe<Scalars['String']['output']>;
   status: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
 };
@@ -287,6 +298,7 @@ export type Mutation = {
   importAzureModelDeployments?: Maybe<ImportAzureModelDeploymentsPayload>;
   login?: Maybe<LoginPayload>;
   logout?: Maybe<Scalars['Boolean']['output']>;
+  resetGatewayKeyUsage?: Maybe<ResetGatewayKeyUsagePayload>;
   revokeGatewayKey?: Maybe<RevokeGatewayKeyPayload>;
   updateGateway?: Maybe<UpdateGatewayPayload>;
   updateInferenceEndpoint?: Maybe<UpdateInferenceEndpointPayload>;
@@ -315,6 +327,11 @@ export type MutationImportAzureModelDeploymentsArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationResetGatewayKeyUsageArgs = {
+  input: ResetGatewayKeyUsageInput;
 };
 
 
@@ -384,13 +401,22 @@ export type QueryNodeArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type ResetGatewayKeyUsageInput = {
+  gatewayKeyId: Scalars['ID']['input'];
+};
+
+export type ResetGatewayKeyUsagePayload = {
+  __typename?: 'ResetGatewayKeyUsagePayload';
+  gatewayKey?: Maybe<GatewayKey>;
+};
+
 export type RevokeGatewayKeyInput = {
   gatewayKeyId: Scalars['ID']['input'];
 };
 
 export type RevokeGatewayKeyPayload = {
   __typename?: 'RevokeGatewayKeyPayload';
-  gatewayKey?: Maybe<GatewayKey>;
+  gatewayKeys: Array<GatewayKey>;
 };
 
 export type UpdateGatewayInput = {
@@ -449,9 +475,16 @@ export type RevokeGatewayKeyMutationVariables = Exact<{
 }>;
 
 
-export type RevokeGatewayKeyMutation = { __typename?: 'Mutation', revokeGatewayKey?: { __typename?: 'RevokeGatewayKeyPayload', gatewayKey?: { __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string } | null } | null };
+export type RevokeGatewayKeyMutation = { __typename?: 'Mutation', revokeGatewayKey?: { __typename?: 'RevokeGatewayKeyPayload', gatewayKeys: Array<{ __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string }> } | null };
 
-export type UpdateGatewayKeysForm_GatewayKeysFragment = { __typename?: 'GatewayKeyConnection', totalCount: number, edges?: Array<{ __typename?: 'GatewayKeyEdge', node?: { __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string } | null } | null> | null };
+export type ResetGatewayKeyUsageMutationVariables = Exact<{
+  input: ResetGatewayKeyUsageInput;
+}>;
+
+
+export type ResetGatewayKeyUsageMutation = { __typename?: 'Mutation', resetGatewayKeyUsage?: { __typename?: 'ResetGatewayKeyUsagePayload', gatewayKey?: { __typename?: 'GatewayKey', promptTokens: number, completionTokens: number, lastResetAt?: string | null } | null } | null };
+
+export type UpdateGatewayKeysForm_GatewayKeysFragment = { __typename?: 'GatewayKeyConnection', totalCount: number, edges?: Array<{ __typename?: 'GatewayKeyEdge', node?: { __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string, promptTokens: number, completionTokens: number, promptTokensLimit?: number | null, completionTokensLimit?: number | null, resetFrequency?: string | null, lastResetAt?: string | null, parent?: { __typename?: 'GatewayKey', id: string, name: string } | null } | null } | null> | null };
 
 export type UpdateGatewayKeysForm_GatewayFragment = { __typename?: 'Gateway', id: string };
 
@@ -460,7 +493,7 @@ export type GatewayPageQueryVariables = Exact<{
 }>;
 
 
-export type GatewayPageQuery = { __typename?: 'Query', gateway?: { __typename?: 'Gateway', id: string, name: string, traceTraffic: boolean, tracePayload: boolean, logTraffic: boolean, logPayload: boolean, keys?: { __typename?: 'GatewayKeyConnection', totalCount: number, edges?: Array<{ __typename?: 'GatewayKeyEdge', node?: { __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string } | null } | null> | null } | null, inferenceEndpoints?: { __typename?: 'GatewayInferenceEndpointConnection', edges?: Array<{ __typename?: 'GatewayInferenceEndpointEdge', node?: { __typename?: 'InferenceEndpoint', id: string } | null } | null> | null } | null } | { __typename?: 'GatewayKey' } | { __typename?: 'GatewayRequest' } | { __typename?: 'InferenceEndpoint' } | null, inferenceEndpoints?: { __typename?: 'InferenceEndpointConnection', edges?: Array<{ __typename?: 'InferenceEndpointEdge', node?: { __typename?: 'InferenceEndpoint', id: string, name: string, platform: string, status: string } | null } | null> | null } | null, viewer?: { __typename?: 'Viewer', id: string, email: string } | null };
+export type GatewayPageQuery = { __typename?: 'Query', gateway?: { __typename?: 'Gateway', id: string, name: string, traceTraffic: boolean, tracePayload: boolean, logTraffic: boolean, logPayload: boolean, keys?: { __typename?: 'GatewayKeyConnection', totalCount: number, edges?: Array<{ __typename?: 'GatewayKeyEdge', node?: { __typename?: 'GatewayKey', id: string, name: string, maskedKey: string, status: string, promptTokens: number, completionTokens: number, promptTokensLimit?: number | null, completionTokensLimit?: number | null, resetFrequency?: string | null, lastResetAt?: string | null, parent?: { __typename?: 'GatewayKey', id: string, name: string } | null } | null } | null> | null } | null, inferenceEndpoints?: { __typename?: 'GatewayInferenceEndpointConnection', edges?: Array<{ __typename?: 'GatewayInferenceEndpointEdge', node?: { __typename?: 'InferenceEndpoint', id: string } | null } | null> | null } | null } | { __typename?: 'GatewayKey' } | { __typename?: 'GatewayRequest' } | { __typename?: 'InferenceEndpoint' } | null, inferenceEndpoints?: { __typename?: 'InferenceEndpointConnection', edges?: Array<{ __typename?: 'InferenceEndpointEdge', node?: { __typename?: 'InferenceEndpoint', id: string, name: string, platform: string, status: string } | null } | null> | null } | null, viewer?: { __typename?: 'Viewer', id: string, email: string } | null };
 
 export type UpdateGatewayMutationVariables = Exact<{
   input: UpdateGatewayInput;
@@ -552,6 +585,8 @@ export type HomePageQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HomePageQuery = { __typename?: 'Query', gateways?: { __typename?: 'GatewayConnection', totalCount: number } | null, inferenceEndpoints?: { __typename?: 'InferenceEndpointConnection', totalCount: number } | null, viewer?: { __typename?: 'Viewer', id: string, email: string } | null };
 
+export type Layout_ViewerFragment = { __typename?: 'Viewer', id: string, email: string };
+
 export type GatewayRequestTable_GatewaysFragment = { __typename?: 'GatewayConnection', edges?: Array<{ __typename?: 'GatewayEdge', node?: { __typename?: 'Gateway', id: string, name: string } | null } | null> | null };
 
 export type GatewayRequestTable_GatewayRequestsFragment = { __typename?: 'GatewayRequestConnection', pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean }, edges?: Array<{ __typename?: 'GatewayRequestEdge', node?: { __typename?: 'GatewayRequest', id: string, url: string, body?: string | null, contentType?: string | null, requestId: string, tools?: boolean | null, stream?: boolean | null, temperature?: number | null, maxTokens?: number | null, createdAt: string, gateway: { __typename?: 'Gateway', id: string, name: string }, gatewayKey: { __typename?: 'GatewayKey', name: string }, gatewayResponse?: { __typename?: 'GatewayResponse', id: string, duration: number, statusCode: number, headers: any, body?: string | null, createdAt: string, inferenceEndpointResponse?: { __typename?: 'InferenceEndpointResponse', promptTokens?: number | null, completionTokens?: number | null, inferenceEndpointRequest?: { __typename?: 'InferenceEndpointRequest', id: string, inferenceEndpoint: { __typename?: 'InferenceEndpoint', id: string, name: string } } | null } | null } | null } | null } | null> | null };
@@ -576,8 +611,6 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout?: boolean | null };
-
-export type Layout_ViewerFragment = { __typename?: 'Viewer', id: string, email: string };
 
 export const GatewayList_GatewaysFragmentDoc = gql`
     fragment GatewayList_gateways on GatewayConnection {
@@ -628,6 +661,16 @@ export const UpdateGatewayKeysForm_GatewayKeysFragmentDoc = gql`
       name
       maskedKey
       status
+      promptTokens
+      completionTokens
+      promptTokensLimit
+      completionTokensLimit
+      resetFrequency
+      lastResetAt
+      parent {
+        id
+        name
+      }
     }
   }
 }
@@ -674,6 +717,12 @@ export const InferenceEndpointTable_AzureModelDeploymentsFragmentDoc = gql`
   modelDeploymentName
   modelDeploymentModelName
   modelDeploymentModelVersion
+}
+    `;
+export const Layout_ViewerFragmentDoc = gql`
+    fragment Layout_viewer on Viewer {
+  id
+  email
 }
     `;
 export const GatewayRequestTable_GatewaysFragmentDoc = gql`
@@ -736,12 +785,6 @@ export const GatewayRequestTable_GatewayRequestsFragmentDoc = gql`
   }
 }
     `;
-export const Layout_ViewerFragmentDoc = gql`
-    fragment Layout_viewer on Viewer {
-  id
-  email
-}
-    `;
 export const AddGatewayKeyDocument = gql`
     mutation AddGatewayKey($input: AddGatewayKeyInput!) {
   addGatewayKey(input: $input) {
@@ -784,7 +827,7 @@ export type AddGatewayKeyMutationOptions = Apollo.BaseMutationOptions<AddGateway
 export const RevokeGatewayKeyDocument = gql`
     mutation RevokeGatewayKey($input: RevokeGatewayKeyInput!) {
   revokeGatewayKey(input: $input) {
-    gatewayKey {
+    gatewayKeys {
       id
       name
       maskedKey
@@ -819,6 +862,43 @@ export function useRevokeGatewayKeyMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokeGatewayKeyMutationHookResult = ReturnType<typeof useRevokeGatewayKeyMutation>;
 export type RevokeGatewayKeyMutationResult = Apollo.MutationResult<RevokeGatewayKeyMutation>;
 export type RevokeGatewayKeyMutationOptions = Apollo.BaseMutationOptions<RevokeGatewayKeyMutation, RevokeGatewayKeyMutationVariables>;
+export const ResetGatewayKeyUsageDocument = gql`
+    mutation ResetGatewayKeyUsage($input: ResetGatewayKeyUsageInput!) {
+  resetGatewayKeyUsage(input: $input) {
+    gatewayKey {
+      promptTokens
+      completionTokens
+      lastResetAt
+    }
+  }
+}
+    `;
+export type ResetGatewayKeyUsageMutationFn = Apollo.MutationFunction<ResetGatewayKeyUsageMutation, ResetGatewayKeyUsageMutationVariables>;
+
+/**
+ * __useResetGatewayKeyUsageMutation__
+ *
+ * To run a mutation, you first call `useResetGatewayKeyUsageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResetGatewayKeyUsageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resetGatewayKeyUsageMutation, { data, loading, error }] = useResetGatewayKeyUsageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useResetGatewayKeyUsageMutation(baseOptions?: Apollo.MutationHookOptions<ResetGatewayKeyUsageMutation, ResetGatewayKeyUsageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResetGatewayKeyUsageMutation, ResetGatewayKeyUsageMutationVariables>(ResetGatewayKeyUsageDocument, options);
+      }
+export type ResetGatewayKeyUsageMutationHookResult = ReturnType<typeof useResetGatewayKeyUsageMutation>;
+export type ResetGatewayKeyUsageMutationResult = Apollo.MutationResult<ResetGatewayKeyUsageMutation>;
+export type ResetGatewayKeyUsageMutationOptions = Apollo.BaseMutationOptions<ResetGatewayKeyUsageMutation, ResetGatewayKeyUsageMutationVariables>;
 export const GatewayPageDocument = gql`
     query GatewayPage($gatewayId: ID!) {
   gateway: node(id: $gatewayId) {

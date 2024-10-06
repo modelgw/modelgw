@@ -56,9 +56,9 @@ npx nx serve modelgw | pino-pretty
 - `nx serve modelgw` - Starts the development server by automatically restarting the node application when a file changes in the `src` directory are detected.
 - `nx dev admin` - Starts the Admin in development mode and automatically restarts the Next.js application when a file changes in the `src` directory are detected.
 - `nx lint modelgw` - Identifying and reporting on patterns found in the project code, to make the code more consistent and avoid bugs.
-- `nx codegen-generate modelgw` - Generates types from GraphQL.
-- `nx run prisma-reset` - Drops and recreates the database, which results in data loss (for development only).
-- `nx run prisma-migrate` - Updates your database using migrations during development and creates the database if it does not exist (for development only).
+- `nx codegen-generate modelgw && nx codegen-generate admin` - Generates types from GraphQL.
+- `nx prisma-reset modelgw` - Drops and recreates the database, which results in data loss (for development only).
+- `nx prisma-migrate modelgw --name <migration-name>` - Updates your database using migrations during development and creates the database if it does not exist (for development only).
 - `nx prisma-generate modelgw` - Generates Prisma Client code.
 - `nx prisma-deploy modelgw` - Applies all pending migrations, and creates the database if it does not exist. For production use.
 - `nx show project modelgw` - See all available targets to run for a project.

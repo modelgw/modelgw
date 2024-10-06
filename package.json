@@ -55,6 +55,7 @@
     "next": "^14.2.9",
     "next-runtime-env": "^3.2.2",
     "next-themes": "^0.3.0",
+    "node-cron": "^3.0.3",
     "pino": "^9.0.0",
     "prisma-field-encryption": "^1.5.2",
     "react": "^18.3.1",

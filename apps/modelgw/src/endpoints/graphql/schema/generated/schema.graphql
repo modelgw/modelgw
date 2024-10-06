@@ -4,8 +4,12 @@ schema {
 }
 
 input AddGatewayKeyInput {
+  completionTokensLimit: Int
   gatewayId: ID!
   name: String!
+  parentGatewayKeyId: ID
+  promptTokensLimit: Int
+  resetFrequency: String
 }
 
 type AddGatewayKeyPayload {
@@ -91,10 +95,17 @@ type GatewayInferenceEndpointEdge {
 }
 
 type GatewayKey implements Node {
+  completionTokens: Int!
+  completionTokensLimit: Int
   createdAt: String!
   id: ID!
+  lastResetAt: String
   maskedKey: String!
   name: String!
+  parent: GatewayKey
+  promptTokens: Int!
+  promptTokensLimit: Int
+  resetFrequency: String
   status: String!
   updatedAt: String!
 }
@@ -234,6 +245,7 @@ type Mutation {
   importAzureModelDeployments(input: ImportAzureModelDeploymentsInput!): ImportAzureModelDeploymentsPayload
   login(input: LoginInput!): LoginPayload
   logout: Boolean
+  resetGatewayKeyUsage(input: ResetGatewayKeyUsageInput!): ResetGatewayKeyUsagePayload
   revokeGatewayKey(input: RevokeGatewayKeyInput!): RevokeGatewayKeyPayload
   updateGateway(input: UpdateGatewayInput!): UpdateGatewayPayload
   updateInferenceEndpoint(input: UpdateInferenceEndpointInput!): UpdateInferenceEndpointPayload
@@ -259,12 +271,20 @@ type Query {
   viewer: Viewer
 }
 
+input ResetGatewayKeyUsageInput {
+  gatewayKeyId: ID!
+}
+
+type ResetGatewayKeyUsagePayload {
+  gatewayKey: GatewayKey
+}
+
 input RevokeGatewayKeyInput {
   gatewayKeyId: ID!
 }
 
 type RevokeGatewayKeyPayload {
-  gatewayKey: GatewayKey
+  gatewayKeys: [GatewayKey!]!
 }
 
 input UpdateGatewayInput {

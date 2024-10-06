@@ -93,7 +93,7 @@ export function TableHeader({ className, ...props }: React.ComponentPropsWithout
   )
 }
 
-export function TableCell({ className, children, ...props }: React.ComponentPropsWithoutRef<'td'>) {
+export function TableCell({ indent, className, children, ...props }: { indent?: number } & React.ComponentPropsWithoutRef<'td'>) {
   const { bleed, dense, grid, striped } = useContext(TableContext)
   const { href, target, title } = useContext(TableRowContext)
   const [cellRef, setCellRef] = useState<HTMLElement | null>(null)
@@ -110,6 +110,7 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
         dense ? 'py-2.5' : 'py-4',
         !bleed && 'sm:first:pl-2 sm:last:pr-2'
       )}
+      style={{ paddingLeft: indent ? `${indent * 1.5}rem` : undefined }}
     >
       {href && (
         <Link
