@@ -2,6 +2,10 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
+      - feature/*
+      - bugfix/*
     paths: 
       - 'apps/docs/**'
     tags-ignore: 
