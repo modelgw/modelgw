@@ -44,10 +44,16 @@ function statusCodeBadgeColor(statusCode: number) {
 
 type JsonViewerProps = {
   value?: {
+    // Ollama
+    message?: {
+      role?: string;
+      content?: string;
+    };
     messages?: Array<{
       role?: string;
       content?: string;
     }>;
+    // OpenAI
     choices?: Array<{
       delta?: {
         role?: string;
@@ -64,11 +70,14 @@ type JsonViewerProps = {
 
 function CustomJsonViewer({ value: payload }: JsonViewerProps) {
   const lastMessage = payload?.messages?.[payload.messages?.length - 1];
-  const hasRoleAndContent = !!(lastMessage?.role && lastMessage?.content);
+  const hasMessagesRoleAndContent = !!(lastMessage?.role && lastMessage?.content);
+  const hasMessageRoleAndContent = !!(payload?.message?.role && payload.message?.content);
   const hasChoices = !!(payload?.choices && payload.choices.length > 0);
   let preview: React.ReactNode = '...';
-  if (hasRoleAndContent) {
+  if (hasMessagesRoleAndContent) {
     preview = <span title="Preview">"{lastMessage.role}" &raquo; "{lastMessage.content}"</span>;
+  } else if (hasMessageRoleAndContent) {
+    preview = <span title="Preview">"{payload.message?.role}" &raquo; "{payload.message?.content}"</span>;
   } else if (hasChoices) {
     const choices: Array<React.ReactNode> = [];
     if (payload!.choices![0].delta?.role) {
@@ -86,7 +95,7 @@ function CustomJsonViewer({ value: payload }: JsonViewerProps) {
     preview = <span title="Preview">{intersperse(choices, ', ')}</span>;
   }
 
-  const collapsed = (hasRoleAndContent || hasChoices) ? 0 : 3;
+  const collapsed = (hasMessagesRoleAndContent || hasMessageRoleAndContent || hasChoices) ? 0 : 3;
   return <JsonView value={payload} displayDataTypes={false} collapsed={collapsed}>
     <JsonView.Ellipsis render={({ 'data-expanded': isExpanded, className, ...props }, { value }) => {
       if (isExpanded) {
