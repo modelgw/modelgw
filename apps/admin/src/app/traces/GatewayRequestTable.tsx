@@ -15,6 +15,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 type Props = {
   gateways: GatewayRequestTable_GatewaysFragment,
   gatewayRequests: GatewayRequestTable_GatewayRequestsFragment;
+  defaultFilter: GatewayRequestFilter;
   fetchMore: () => void;
   filter: (filter: GatewayRequestFilter) => void;
 }
@@ -122,14 +123,14 @@ function BodyPreview({ body }: { body: string | null | undefined }) {
       // try to parse as JSON lines
       const jsonViews: Array<React.ReactNode> = [];
       const lines = body.split('\n');
-      for (const line of lines) {
+      for (const [index, line] of lines.entries()) {
         try {
           const jsonBody = JSON.parse(line.trim());
           if (isObject(jsonBody)) {
-            jsonViews.push(<CustomJsonViewer value={jsonBody} />);
+            jsonViews.push(<CustomJsonViewer value={jsonBody} key={index} />);
           }
         } catch (e) {
-          jsonViews.push(<div className="font-mono break-all">{line}</div>);
+          jsonViews.push(<div className="font-mono break-all" key={index}>{line}</div>);
         }
       }
       return jsonViews;
@@ -139,14 +140,14 @@ function BodyPreview({ body }: { body: string | null | undefined }) {
 
 }
 
-export default function GatewayRequestTable({ gateways, gatewayRequests, fetchMore, filter }: Props) {
+export default function GatewayRequestTable({ gateways, gatewayRequests, defaultFilter, fetchMore, filter }: Props) {
   const [selectedGatewayRequestIds, setSelectedGatewayRequestIds] = useState<string[]>([]);
   const { register, handleSubmit, reset, formState: { errors, isDirty }, clearErrors } = useForm<GatewayRequestFilter>({
     defaultValues: {
       gatewayId: '',
       createdAt: {
-        gte: null,
-        lte: null,
+        gte: defaultFilter.createdAt?.gte,
+        lte: defaultFilter.createdAt?.lte,
       }
     },
   });

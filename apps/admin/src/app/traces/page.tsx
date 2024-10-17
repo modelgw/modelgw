@@ -3,6 +3,7 @@ import Layout from '@/components/ui/Layout';
 import SectionHeading from '@/components/ui/SectionHeading';
 import { GatewayRequestFilter, useTracesListQuery, useTracesPageSuspenseQuery } from '@/generated/graphql-client';
 import { gql } from '@apollo/client';
+import dayjs from 'dayjs';
 import { redirect } from 'next/navigation';
 import GatewayRequestTable from './GatewayRequestTable';
 
@@ -26,8 +27,17 @@ const TRACES_PAGE_QUERY = gql`
 export type FetchMore = ReturnType<typeof useTracesListQuery>['fetchMore'];
 
 export default function TracesPage() {
+  const defaultFilter: GatewayRequestFilter = {
+    createdAt: {
+      gte: dayjs(Date.now() - 60 * 60 * 1000).format('YYYY-MM-DDTHH:mm:ss'),
+      lte: null,
+    }
+  };
+
   const { data } = useTracesPageSuspenseQuery();
-  const { data: listData, loading, error, fetchMore, refetch } = useTracesListQuery({ ssr: false, variables: { first: 50 } });
+  const { data: listData, loading, error, fetchMore, refetch } = useTracesListQuery({
+    ssr: false, variables: { first: 50, filter: defaultFilter }
+  });
   if (!data.viewer) return redirect('/login');
 
   const handleFetchMore = async () => {
@@ -80,6 +90,7 @@ export default function TracesPage() {
           <GatewayRequestTable
             gateways={data.gateways!}
             gatewayRequests={listData!.gatewayRequests!}
+            defaultFilter={defaultFilter}
             fetchMore={handleFetchMore}
             filter={handleFilter}
           />
