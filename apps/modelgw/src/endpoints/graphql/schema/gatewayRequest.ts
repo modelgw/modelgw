@@ -34,6 +34,7 @@ export const gatewayRequestTypeDefs = gql`
     gateway: Gateway!
     gatewayKey: GatewayKey!
     gatewayResponse: GatewayResponse
+    inferenceEndpointRequests(after: String, first: Int, before: String, last: Int): InferenceEndpointRequestConnection
   }
   type GatewayResponse {
     id: ID!
@@ -55,6 +56,15 @@ export const gatewayRequestTypeDefs = gql`
     completionTokens: Int
     createdAt: String!
     inferenceEndpointRequest: InferenceEndpointRequest
+  }
+  type InferenceEndpointRequestConnection {
+    edges: [InferenceEndpointRequestEdge]
+    pageInfo: PageInfo!
+    totalCount: Int!
+  }
+  type InferenceEndpointRequestEdge {
+    node: InferenceEndpointRequest
+    cursor: String!
   }
   type InferenceEndpointRequest {
     id: ID!
@@ -107,10 +117,7 @@ export const gatewayRequestResolvers = {
           },
           orderBy: { createdAt: 'asc' },
         }),
-        () => prismaClient.gatewayRequest.count({
-          where: {
-          }
-        }),
+        () => prismaClient.gatewayRequest.count(),
         args,
         {
           getCursor: (node) => ({ id: node.id }),
@@ -122,5 +129,24 @@ export const gatewayRequestResolvers = {
   },
   GatewayRequest: {
     id: (obj: GatewayRequest) => encodeGlobalId(obj.id, 'GatewayRequest'),
+    inferenceEndpointRequests: async (parent: GatewayRequest, args: any, { prismaClient }: ServerContext, _info: any) => {
+      return findManyCursorConnection(
+        (findManyArgs) => prismaClient.inferenceEndpointRequest.findMany({
+          ...findManyArgs,
+          where: { gatewayRequestId: parent.id },
+          include: { inferenceEndpoint: true },
+          orderBy: { createdAt: 'asc' },
+        }),
+        () => prismaClient.inferenceEndpointRequest.count({
+          where: { gatewayRequestId: parent.id }
+        }),
+        args,
+        {
+          getCursor: (node) => ({ id: node.id }),
+          decodeCursor: (cursor) => ({ id: decodeGlobalIdStr(cursor).id }),
+          encodeCursor: (cursor) => encodeGlobalId(cursor.id!, 'InferenceEndpointRequest'),
+        }
+      );
+    }
   }
 };

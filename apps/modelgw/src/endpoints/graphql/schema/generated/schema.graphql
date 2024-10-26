@@ -129,6 +129,7 @@ type GatewayRequest implements Node {
   gatewayKey: GatewayKey!
   gatewayResponse: GatewayResponse
   id: ID!
+  inferenceEndpointRequests(after: String, before: String, first: Int, last: Int): InferenceEndpointRequestConnection
   ip: String!
   maxTokens: Int
   requestId: String!
@@ -211,6 +212,17 @@ type InferenceEndpointRequest {
   inferenceEndpoint: InferenceEndpoint!
   method: String!
   url: String!
+}
+
+type InferenceEndpointRequestConnection {
+  edges: [InferenceEndpointRequestEdge]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type InferenceEndpointRequestEdge {
+  cursor: String!
+  node: InferenceEndpointRequest
 }
 
 type InferenceEndpointResponse {

@@ -172,6 +172,7 @@ export type GatewayRequest = Node & {
   gatewayKey: GatewayKey;
   gatewayResponse?: Maybe<GatewayResponse>;
   id: Scalars['ID']['output'];
+  inferenceEndpointRequests?: Maybe<InferenceEndpointRequestConnection>;
   ip: Scalars['String']['output'];
   maxTokens?: Maybe<Scalars['Int']['output']>;
   requestId: Scalars['String']['output'];
@@ -181,6 +182,14 @@ export type GatewayRequest = Node & {
   tools?: Maybe<Scalars['Boolean']['output']>;
   topP?: Maybe<Scalars['Float']['output']>;
   url: Scalars['String']['output'];
+};
+
+
+export type GatewayRequestinferenceEndpointRequestsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type GatewayRequestConnection = {
@@ -262,6 +271,19 @@ export type InferenceEndpointRequest = {
   inferenceEndpoint: InferenceEndpoint;
   method: Scalars['String']['output'];
   url: Scalars['String']['output'];
+};
+
+export type InferenceEndpointRequestConnection = {
+  __typename?: 'InferenceEndpointRequestConnection';
+  edges?: Maybe<Array<Maybe<InferenceEndpointRequestEdge>>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type InferenceEndpointRequestEdge = {
+  __typename?: 'InferenceEndpointRequestEdge';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<InferenceEndpointRequest>;
 };
 
 export type InferenceEndpointResponse = {
@@ -562,6 +584,8 @@ export type ResolversTypes = {
   InferenceEndpointConnection: ResolverTypeWrapper<InferenceEndpointConnection>;
   InferenceEndpointEdge: ResolverTypeWrapper<InferenceEndpointEdge>;
   InferenceEndpointRequest: ResolverTypeWrapper<InferenceEndpointRequest>;
+  InferenceEndpointRequestConnection: ResolverTypeWrapper<InferenceEndpointRequestConnection>;
+  InferenceEndpointRequestEdge: ResolverTypeWrapper<InferenceEndpointRequestEdge>;
   InferenceEndpointResponse: ResolverTypeWrapper<InferenceEndpointResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']['output']>;
@@ -616,6 +640,8 @@ export type ResolversParentTypes = {
   InferenceEndpointConnection: InferenceEndpointConnection;
   InferenceEndpointEdge: InferenceEndpointEdge;
   InferenceEndpointRequest: InferenceEndpointRequest;
+  InferenceEndpointRequestConnection: InferenceEndpointRequestConnection;
+  InferenceEndpointRequestEdge: InferenceEndpointRequestEdge;
   InferenceEndpointResponse: InferenceEndpointResponse;
   Int: Scalars['Int']['output'];
   JSONObject: Scalars['JSONObject']['output'];
@@ -746,6 +772,7 @@ export type GatewayRequestResolvers<ContextType = any, ParentType extends Resolv
   gatewayKey?: Resolver<ResolversTypes['GatewayKey'], ParentType, ContextType>;
   gatewayResponse?: Resolver<Maybe<ResolversTypes['GatewayResponse']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  inferenceEndpointRequests?: Resolver<Maybe<ResolversTypes['InferenceEndpointRequestConnection']>, ParentType, ContextType, Partial<GatewayRequestinferenceEndpointRequestsArgs>>;
   ip?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   maxTokens?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   requestId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -822,6 +849,19 @@ export type InferenceEndpointRequestResolvers<ContextType = any, ParentType exte
   inferenceEndpoint?: Resolver<ResolversTypes['InferenceEndpoint'], ParentType, ContextType>;
   method?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InferenceEndpointRequestConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['InferenceEndpointRequestConnection'] = ResolversParentTypes['InferenceEndpointRequestConnection']> = {
+  edges?: Resolver<Maybe<Array<Maybe<ResolversTypes['InferenceEndpointRequestEdge']>>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InferenceEndpointRequestEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['InferenceEndpointRequestEdge'] = ResolversParentTypes['InferenceEndpointRequestEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<Maybe<ResolversTypes['InferenceEndpointRequest']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -932,6 +972,8 @@ export type Resolvers<ContextType = any> = {
   InferenceEndpointConnection?: InferenceEndpointConnectionResolvers<ContextType>;
   InferenceEndpointEdge?: InferenceEndpointEdgeResolvers<ContextType>;
   InferenceEndpointRequest?: InferenceEndpointRequestResolvers<ContextType>;
+  InferenceEndpointRequestConnection?: InferenceEndpointRequestConnectionResolvers<ContextType>;
+  InferenceEndpointRequestEdge?: InferenceEndpointRequestEdgeResolvers<ContextType>;
   InferenceEndpointResponse?: InferenceEndpointResponseResolvers<ContextType>;
   JSONObject?: GraphQLScalarType;
   LoginPayload?: LoginPayloadResolvers<ContextType>;

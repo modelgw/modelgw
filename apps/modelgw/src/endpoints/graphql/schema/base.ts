@@ -30,6 +30,8 @@ const resolve = async (_parent: any, args: any, { prismaClient, logger }: Server
     node = await prismaClient.gateway.findUnique({ where: { id } });
   } else if (__typename == 'InferenceEndpoint') {
     node = await prismaClient.inferenceEndpoint.findUnique({ where: { id } });
+  } else if (__typename == 'GatewayRequest') {
+    node = await prismaClient.gatewayRequest.findUnique({ where: { id } });
   } else {
     logger.warn({ __typename, id }, 'Type not found');
     return null;
