@@ -173,6 +173,7 @@ export type GatewayRequest = Node & {
   gatewayKey: GatewayKey;
   gatewayResponse?: Maybe<GatewayResponse>;
   id: Scalars['ID']['output'];
+  inferenceEndpointRequests?: Maybe<InferenceEndpointRequestConnection>;
   ip: Scalars['String']['output'];
   maxTokens?: Maybe<Scalars['Int']['output']>;
   requestId: Scalars['String']['output'];
@@ -182,6 +183,14 @@ export type GatewayRequest = Node & {
   tools?: Maybe<Scalars['Boolean']['output']>;
   topP?: Maybe<Scalars['Float']['output']>;
   url: Scalars['String']['output'];
+};
+
+
+export type GatewayRequestInferenceEndpointRequestsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type GatewayRequestConnection = {
@@ -263,6 +272,19 @@ export type InferenceEndpointRequest = {
   inferenceEndpoint: InferenceEndpoint;
   method: Scalars['String']['output'];
   url: Scalars['String']['output'];
+};
+
+export type InferenceEndpointRequestConnection = {
+  __typename?: 'InferenceEndpointRequestConnection';
+  edges?: Maybe<Array<Maybe<InferenceEndpointRequestEdge>>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type InferenceEndpointRequestEdge = {
+  __typename?: 'InferenceEndpointRequestEdge';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<InferenceEndpointRequest>;
 };
 
 export type InferenceEndpointResponse = {
@@ -456,6 +478,14 @@ export type Viewer = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
 };
+
+export type ChatPageQueryVariables = Exact<{
+  gatewayRequestId: Scalars['ID']['input'];
+  loadRequest?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type ChatPageQuery = { __typename?: 'Query', viewer?: { __typename?: 'Viewer', id: string, email: string } | null, gatewayRequest?: { __typename?: 'Gateway' } | { __typename?: 'GatewayKey' } | { __typename?: 'GatewayRequest', id: string, body?: string | null, inferenceEndpointRequests?: { __typename?: 'InferenceEndpointRequestConnection', edges?: Array<{ __typename?: 'InferenceEndpointRequestEdge', node?: { __typename?: 'InferenceEndpointRequest', inferenceEndpoint: { __typename?: 'InferenceEndpoint', id: string, platform: string } } | null } | null> | null } | null } | { __typename?: 'InferenceEndpoint' } | null, inferenceEndpoints?: { __typename?: 'InferenceEndpointConnection', edges?: Array<{ __typename?: 'InferenceEndpointEdge', node?: { __typename?: 'InferenceEndpoint', id: string, name: string } | null } | null> | null } | null };
 
 export type GatewayList_GatewaysFragment = { __typename?: 'GatewayConnection', edges?: Array<{ __typename?: 'GatewayEdge', node?: { __typename?: 'Gateway', id: string, name: string, status: string } | null } | null> | null };
 
@@ -785,6 +815,71 @@ export const GatewayRequestTable_GatewayRequestsFragmentDoc = gql`
   }
 }
     `;
+export const ChatPageDocument = gql`
+    query ChatPage($gatewayRequestId: ID!, $loadRequest: Boolean = false) {
+  viewer {
+    ...Layout_viewer
+  }
+  gatewayRequest: node(id: $gatewayRequestId) @include(if: $loadRequest) {
+    ... on GatewayRequest {
+      id
+      body
+      inferenceEndpointRequests {
+        edges {
+          node {
+            inferenceEndpoint {
+              id
+              platform
+            }
+          }
+        }
+      }
+    }
+  }
+  inferenceEndpoints {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+    ${Layout_ViewerFragmentDoc}`;
+
+/**
+ * __useChatPageQuery__
+ *
+ * To run a query within a React component, call `useChatPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChatPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChatPageQuery({
+ *   variables: {
+ *      gatewayRequestId: // value for 'gatewayRequestId'
+ *      loadRequest: // value for 'loadRequest'
+ *   },
+ * });
+ */
+export function useChatPageQuery(baseOptions: Apollo.QueryHookOptions<ChatPageQuery, ChatPageQueryVariables> & ({ variables: ChatPageQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChatPageQuery, ChatPageQueryVariables>(ChatPageDocument, options);
+      }
+export function useChatPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChatPageQuery, ChatPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChatPageQuery, ChatPageQueryVariables>(ChatPageDocument, options);
+        }
+export function useChatPageSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ChatPageQuery, ChatPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ChatPageQuery, ChatPageQueryVariables>(ChatPageDocument, options);
+        }
+export type ChatPageQueryHookResult = ReturnType<typeof useChatPageQuery>;
+export type ChatPageLazyQueryHookResult = ReturnType<typeof useChatPageLazyQuery>;
+export type ChatPageSuspenseQueryHookResult = ReturnType<typeof useChatPageSuspenseQuery>;
+export type ChatPageQueryResult = Apollo.QueryResult<ChatPageQuery, ChatPageQueryVariables>;
 export const AddGatewayKeyDocument = gql`
     mutation AddGatewayKey($input: AddGatewayKeyInput!) {
   addGatewayKey(input: $input) {

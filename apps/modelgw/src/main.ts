@@ -33,6 +33,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import http from 'http';
+import { createChatHandler } from './endpoints/chat';
 import { createGatewayServer } from './endpoints/gateway/gateway-server';
 import { createGraphqlServerMiddlewareAsync, graphqlServer } from './endpoints/graphql/graphql-server';
 import { createHealthcheckHandler } from './endpoints/health';
@@ -74,6 +75,7 @@ if (process.env.CORS_ALLOWED_ORIGINS && process.env.CORS_ALLOWED_ORIGINS !== '*'
 
   // Set up server-related Express middleware
   app.use('/graphql', await createGraphqlServerMiddlewareAsync(prismaClient));
+  app.use('/chat', createChatHandler({ prismaClient }));
   app.use('/health', createHealthcheckHandler({ prismaClient }));
 
   // Modified server startup
@@ -81,6 +83,7 @@ if (process.env.CORS_ALLOWED_ORIGINS && process.env.CORS_ALLOWED_ORIGINS !== '*'
   console.log('\x1b[33m 🚀 Server ready. Endpoints: \x1b[0m');
   console.table({
     GraphQL: { Method: 'GET', Endpoint: `http://localhost:${ADMIN_PORT}/graphql` },
+    Chat: { Method: 'POST', Endpoint: `http://localhost:${ADMIN_PORT}/chat` },
     HealthCheck: { Method: 'GET', Endpoint: `http://localhost:${ADMIN_PORT}/health` },
   });
 

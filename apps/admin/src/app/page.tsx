@@ -44,6 +44,11 @@ export default function Home() {
       title: 'Traces',
       description: 'Inspect the traces of calls to your gateways.',
     },
+    data.viewer && {
+      href: '/chat',
+      title: 'Chat',
+      description: 'Chat with AI models and test prompts.',
+    },
     {
       href: 'https://modelgw.com/docs',
       title: 'Docs',

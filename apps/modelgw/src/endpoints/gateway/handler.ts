@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2';
 import { Gateway, GatewayKey, GatewayRequest, InferenceEndpoint, InferenceEndpointRequest } from '@prisma/client';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponseHeaders, RawAxiosResponseHeaders } from 'axios';
 import { createHash } from "crypto";
 import { Request, RequestHandler, Response } from 'express';
 import lodash, { isArray } from 'lodash';
@@ -130,10 +130,15 @@ export const createGatewayHandler = ({ prismaClient }: CreateGatewayHandlerOptio
     const inferenceEndpoints = gateway.inferenceEndpoints.map(value => value.inferenceEndpoint);
     shuffleArray(inferenceEndpoints);
 
-    for (const endpoint of inferenceEndpoints) {
-      const processed = await requestEndpoint({ prismaClient, req, res, gatewayRequest, gateway, gatewayKey, endpoint, logger });
+    for (let i = 0; i < inferenceEndpoints.length; i++) {
+      const endpoint = inferenceEndpoints[i];
+      const isLastItem = i === inferenceEndpoints.length - 1;
+
+      const processed = await requestEndpoint({ prismaClient, req, res, gatewayRequest, gateway, gatewayKey, endpoint, logger, alwaysProcess: isLastItem });
+
       if (processed) return;
     }
+
     res.status(GatewayExhaustedResponseStatus).json(GatewayExhaustedResponse);
   };
 };
@@ -147,11 +152,13 @@ type RequestAzureOpenAIOptions = {
   gatewayKey: GatewayKey;
   endpoint: InferenceEndpoint;
   logger: pino.Logger;
+  alwaysProcess: boolean;
 };
-export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatewayKey, endpoint, prismaClient, logger: mainLogger }: RequestAzureOpenAIOptions) {
+export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatewayKey, endpoint, prismaClient, logger: mainLogger, alwaysProcess }: RequestAzureOpenAIOptions) {
   const logger = mainLogger.child({ inferenceEndpoint: { id: endpoint.id } });
   const headers = createHeadersFromRequest(req);
   const body = req.is('json') ? { ...req.body } : req.body; //shallow copy
+  console.log('body', body);
   let url = new URL(req.url, endpoint.endpoint).toString();
   if (endpoint.platform === InferenceEndpointConst.Platform.AzureOpenAI) {
     headers['api-key'] = endpoint.key!;
@@ -183,14 +190,20 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
     });
   }
   const startTime = performance.now();
+  let responseHeaders: RawAxiosResponseHeaders | AxiosResponseHeaders | undefined = undefined;
+  let responseStatus: number | undefined = undefined;
+  let responseData: any | undefined = undefined;
   try {
-    var fetchResponse = await axios({
+    const fetchResponse = await axios({
       url: url,
       method: req.method,
       headers,
       responseType: 'stream',
       data: req.method == 'GET' || lodash.isEmpty(body) ? undefined : body,
     });
+    responseHeaders = fetchResponse.headers;
+    responseStatus = fetchResponse.status;
+    responseData = fetchResponse.data;
   } catch (error: unknown | AxiosError) {
     const endTime = performance.now();
     if (axios.isAxiosError(error)) {
@@ -202,6 +215,9 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
       }, 'Inference endpoint request failed with axios error');
       // Access to config, request, and response
       if (error.response) {
+        responseHeaders = error.response.headers;
+        responseStatus = error.response.status;
+        responseData = error.response.data;
         // The request was made and the server responded with a status code that falls out of the range of 2xx
         const retryAfterSec = error.response.headers['retry-after'] ? parseInt(error.response.headers['retry-after']) : undefined;
         if (error.response.status == 429) {
@@ -223,17 +239,17 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
       }, 'Inference endpoint request failed');
       await setEndpointStatus(endpoint.id, InferenceEndpointConst.Status.Error, 30, String(error), prismaClient);
     }
-    return false;
+    if (!alwaysProcess || !responseStatus || !responseHeaders) return false;
   }
   // got 2xx response
   if (gateway.logTraffic) {
     logger.info({
-      statusCode: fetchResponse.status,
-      headers: fetchResponse.headers,
+      statusCode: responseStatus,
+      headers: responseHeaders,
       duration: (performance.now() - startTime) / 1000,
     }, 'Inference endpoint request successful. Starting to stream response');
   }
-  const gatewayResponseHeaders = { ...fetchResponse.headers, 'x-modelgw-inference-endpoint-id': endpoint.id.toString() };
+  const gatewayResponseHeaders = { ...responseHeaders, 'x-modelgw-inference-endpoint-id': endpoint.id.toString() };
   res.header(gatewayResponseHeaders);
 
   const transform = new StreamCollectTransform();
@@ -252,7 +268,7 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
 
     if (gateway.logTraffic) {
       logger.info({
-        statusCode: fetchResponse.status,
+        statusCode: responseStatus,
         headers: gatewayResponseHeaders,
         duration: (performance.now() - startTime) / 1000,
         body: gateway.logPayload ? transform.content : undefined,
@@ -262,9 +278,9 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
     if (gateway.traceTraffic && gatewayRequest && inferenceEndpointRequest) {
       const inferenceEndpointResponse = await prismaClient.inferenceEndpointResponse.create({
         data: {
-          statusCode: fetchResponse.status,
+          statusCode: responseStatus,
           duration: (performance.now() - startTime) / 1000,
-          headers: fetchResponse.headers,
+          headers: responseHeaders,
           body: gateway.tracePayload ? transform.content : undefined,
           choices: isArray(jsonBody?.choices) ? jsonBody.choices.length : undefined,
           systemFingerprint: jsonBody?.system_fingerprint,
@@ -277,7 +293,7 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
       await prismaClient.gatewayResponse.create({
         data: {
           duration: (performance.now() - startTime) / 1000,
-          statusCode: fetchResponse.status,
+          statusCode: responseStatus,
           headers: gatewayResponseHeaders,
           body: gateway.tracePayload ? transform.content : undefined,
           gatewayRequestId: gatewayRequest.id,
@@ -286,7 +302,7 @@ export async function requestEndpoint({ req, res, gatewayRequest, gateway, gatew
       });
     }
   });
-  fetchResponse.data.pipe(transform).pipe(res);
+  responseData.pipe(transform).pipe(res);
 
   return true;
 }

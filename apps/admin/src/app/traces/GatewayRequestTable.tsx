@@ -243,25 +243,30 @@ export default function GatewayRequestTable({ gateways, gatewayRequests, default
           {selectedGatewayRequestIds.includes(edge!.node!.id) && <>
             <tr>
               <td colSpan={3} className="p-1">
-                <div className="text-xs">
-                  <Badge color="zinc" className="mr-1">Request</Badge>
+                <div className="text-xs gap-y-1 flex flex-col">
+                  <div>
+                    <Badge color="zinc" className="mr-1">Request</Badge>
+                    <BadgeButton href={`/chat/${edge!.node!.id}`} color="zinc" className="mr-1" >💬 Open in Chat</BadgeButton>
+                  </div>
                   <BodyPreview body={edge!.node?.body} />
                 </div>
               </td>
             </tr>
             {edge!.node!.gatewayResponse && <tr>
               <td colSpan={3} className="p-1">
-                <div className="text-xs inline">
-                  <Badge color="zinc" className="mr-1">Response</Badge>
-                  {edge!.node!.gatewayResponse.inferenceEndpointResponse?.inferenceEndpointRequest?.inferenceEndpoint &&
-                    <BadgeButton
-                      href={`/inference-endpoints/${edge!.node!.gatewayResponse.inferenceEndpointResponse.inferenceEndpointRequest.inferenceEndpoint.id}`}
-                      color="zinc"
-                      className="mr-1"
-                      title="Inference Endpoint"
-                    >
-                      🎯 {edge!.node!.gatewayResponse.inferenceEndpointResponse.inferenceEndpointRequest.inferenceEndpoint.name}
-                    </BadgeButton>}
+                <div className="text-xs gap-y-1 flex flex-col">
+                  <div>
+                    <Badge color="zinc" className="mr-1">Response</Badge>
+                    {edge!.node!.gatewayResponse.inferenceEndpointResponse?.inferenceEndpointRequest?.inferenceEndpoint &&
+                      <BadgeButton
+                        href={`/inference-endpoints/${edge!.node!.gatewayResponse.inferenceEndpointResponse.inferenceEndpointRequest.inferenceEndpoint.id}`}
+                        color="zinc"
+                        className="mr-1"
+                        title="Inference Endpoint"
+                      >
+                        🎯 {edge!.node!.gatewayResponse.inferenceEndpointResponse.inferenceEndpointRequest.inferenceEndpoint.name}
+                      </BadgeButton>}
+                  </div>
                   <BodyPreview body={edge!.node!.gatewayResponse.body} />
                 </div>
               </td>

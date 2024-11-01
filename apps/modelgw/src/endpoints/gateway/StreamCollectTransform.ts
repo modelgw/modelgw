@@ -45,7 +45,7 @@ export class StreamCollectTransform extends Transform {
   }
 
   async _flush(callback) {
-    this.content = this.content.trim();
+    this.content = this.content.trim() + this.buffer.trim();
     callback();
   }
 

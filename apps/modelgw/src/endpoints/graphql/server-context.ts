@@ -2,37 +2,16 @@ import { BaseContext } from '@apollo/server';
 import { ExpressContextFunctionArgument, ExpressMiddlewareOptions } from '@apollo/server/express4';
 import { WithRequired } from '@apollo/utils.withrequired';
 import { createId } from '@paralleldrive/cuid2';
-import jwt from 'jsonwebtoken';
 import pino from 'pino';
+import { getUser, User } from '../../lib/auth';
 import { PrismaClient } from '../../lib/db/client';
 import { logger as mainLogger } from '../../lib/logger';
 
-
-export type User = {
-  id: string,
-  name: string,
-  lastName: string,
-  email: string,
-}
 
 export type ServerContext = BaseContext & ExpressContextFunctionArgument & {
   logger: pino.Logger;
   prismaClient: PrismaClient;
   user?: User;
-};
-
-function getUser(token: string): User | null {
-  try {
-    if (token) {
-      const res = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
-      if (res) {
-        return { id: 'ADMIN', email: res.email, name: 'ADMIN', lastName: 'ADMIN' };
-      }
-    }
-    return null;
-  } catch (err) {
-    return null;
-  }
 };
 
 export const createServerContextMiddlewareOptionsAsync = async (prismaClient: PrismaClient): Promise<
@@ -58,3 +37,5 @@ export const createServerContextMiddlewareOptionsAsync = async (prismaClient: Pr
     },
   };
 };
+export { User };
+

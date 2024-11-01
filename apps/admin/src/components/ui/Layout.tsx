@@ -29,6 +29,7 @@ export default function Layout({ fullWidth, viewer, children }: Props) {
     { name: 'Gateways', href: '/gateways' },
     { name: 'Inference Endpoints', href: '/inference-endpoints' },
     { name: 'Traces', href: '/traces' },
+    { name: 'Chat', href: '/chat' },
   ];
   const userNavigation = [
     {

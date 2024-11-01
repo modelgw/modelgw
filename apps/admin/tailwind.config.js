@@ -13,5 +13,10 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('@assistant-ui/react/tailwindcss')({
+      components: ['thread'],
+    }),
+  ],
 };

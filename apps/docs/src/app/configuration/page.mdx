@@ -52,6 +52,9 @@ Admin Console is configured using environment variables. Since Admin Console is 
   <Property name="GRAPHQL_URL">
     URL of Model Gateway's GraphQL Management API, e.g. http://modelgw:4000/graphql
   </Property>
+  <Property name="NEXT_PUBLIC_CHAT_URL">
+    URL of Model Gateway's chat endpoint. It's used by Chat app in Admin Console, e.g. http://localhost:4000/chat.
+  </Property>
   <Property name="NEXT_PUBLIC_GATEWAY_URL">
     URL of Model Gateway's gateway endpoint. This is also where your AI app will connect. URL can be behind some other HTTP server or firewall or in Docker network, e.g. http://modelgw:4001.
   </Property>
