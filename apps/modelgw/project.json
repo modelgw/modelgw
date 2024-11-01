@@ -10,6 +10,16 @@
         "prisma-generate"
       ]
     },
+    "test": {
+      "dependsOn": [
+        "prisma-generate"
+      ]
+    },
+    "lint": {
+      "dependsOn": [
+        "prisma-generate"
+      ]
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
